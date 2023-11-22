@@ -1,12 +1,17 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using WebApi.Data.FluentApi;
 using WebApi.Models;
 
 namespace WebApi.Data
 {
     public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<Admin> Admins { get; set; }
+        public DbSet<Pentester> Pentesters { get; set; }
+        public DbSet<Client> Clients { get; set; }
+        public DbSet<PentrationTest> Tests { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var config = new ConfigurationBuilder()
@@ -38,6 +43,14 @@ namespace WebApi.Data
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
+
+            modelBuilder.AddAdminEntity();
+            modelBuilder.AddClientEntity();
+            modelBuilder.AddPentesterEntity();
+            modelBuilder.AddPentrationTestEntity();
+            //modelBuilder.AddPentesterTestEntity();
+            modelBuilder.AddTargetSystemEntity();
+            modelBuilder.AddPentestingMethodologyEntity();
         }
     }
 }

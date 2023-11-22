@@ -11,11 +11,13 @@ namespace WebApi.Data.FluentApi
 
             pentrationTestEntity.HasOne(t => t.System)
                 .WithMany(s => s.Tests)
-                .HasForeignKey(t => t.SystemId);
+                .HasForeignKey(t => t.SystemId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             pentrationTestEntity.HasOne(p => p.Owner)
                 .WithMany(t => t.RequestedTests)
-                .HasForeignKey(t => t.OwnerId);
+                .HasForeignKey(t => t.OwnerId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             return modelBuilder;
         }

@@ -11,7 +11,8 @@ namespace WebApi.Data.FluentApi
 
             clientEntity.HasMany(c => c.RequestedTests)
                 .WithOne(t => t.Owner)
-                .HasForeignKey(t => t.OwnerId);
+                .HasForeignKey(t => t.OwnerId)
+                .OnDelete(DeleteBehavior.NoAction);
 
             return modelBuilder;
         }

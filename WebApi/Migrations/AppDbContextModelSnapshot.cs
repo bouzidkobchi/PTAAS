@@ -172,13 +172,13 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("PentestingMethodologyPentrationTest", b =>
                 {
-                    b.Property<string>("MethodologyName")
+                    b.Property<string>("MethodologiesName")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("TestsId")
                         .HasColumnType("int");
 
-                    b.HasKey("MethodologyName", "TestsId");
+                    b.HasKey("MethodologiesName", "TestsId");
 
                     b.HasIndex("TestsId");
 
@@ -293,7 +293,7 @@ namespace WebApi.Migrations
 
                     b.HasIndex("SystemId");
 
-                    b.ToTable("PentrationTest");
+                    b.ToTable("Tests");
                 });
 
             modelBuilder.Entity("WebApi.Models.TargetSystem", b =>
@@ -400,7 +400,7 @@ namespace WebApi.Migrations
                 {
                     b.HasOne("WebApi.Models.PentestingMethodology", null)
                         .WithMany()
-                        .HasForeignKey("MethodologyName")
+                        .HasForeignKey("MethodologiesName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -416,13 +416,13 @@ namespace WebApi.Migrations
                     b.HasOne("WebApi.Models.Client", "Owner")
                         .WithMany("RequestedTests")
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("WebApi.Models.TargetSystem", "System")
                         .WithMany("Tests")
                         .HasForeignKey("SystemId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Owner");

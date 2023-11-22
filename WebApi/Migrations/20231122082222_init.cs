@@ -12,6 +12,17 @@ namespace WebApi.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "PentestingMethodology",
+                columns: table => new
+                {
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PentestingMethodology", x => x.Name);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Roles",
                 columns: table => new
                 {
@@ -23,6 +34,17 @@ namespace WebApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TargetSystem",
+                columns: table => new
+                {
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TargetSystem", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -92,7 +114,8 @@ namespace WebApi.Migrations
                 name: "Clients",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Company = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -207,6 +230,91 @@ namespace WebApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Tests",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SystemId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Status = table.Column<byte>(type: "tinyint", nullable: false),
+                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ScheduleTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Tests_Clients_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Clients",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Tests_TargetSystem_SystemId",
+                        column: x => x.SystemId,
+                        principalTable: "TargetSystem",
+                        principalColumn: "Name");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PentesterPentrationTest",
+                columns: table => new
+                {
+                    PentestersId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TokenTestsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PentesterPentrationTest", x => new { x.PentestersId, x.TokenTestsId });
+                    table.ForeignKey(
+                        name: "FK_PentesterPentrationTest_Pentesters_PentestersId",
+                        column: x => x.PentestersId,
+                        principalTable: "Pentesters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PentesterPentrationTest_Tests_TokenTestsId",
+                        column: x => x.TokenTestsId,
+                        principalTable: "Tests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PentestingMethodologyPentrationTest",
+                columns: table => new
+                {
+                    MethodologiesName = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TestsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PentestingMethodologyPentrationTest", x => new { x.MethodologiesName, x.TestsId });
+                    table.ForeignKey(
+                        name: "FK_PentestingMethodologyPentrationTest_PentestingMethodology_MethodologiesName",
+                        column: x => x.MethodologiesName,
+                        principalTable: "PentestingMethodology",
+                        principalColumn: "Name",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PentestingMethodologyPentrationTest_Tests_TestsId",
+                        column: x => x.TestsId,
+                        principalTable: "Tests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PentesterPentrationTest_TokenTestsId",
+                table: "PentesterPentrationTest",
+                column: "TokenTestsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PentestingMethodologyPentrationTest_TestsId",
+                table: "PentestingMethodologyPentrationTest",
+                column: "TestsId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_RoleClaims_RoleId",
                 table: "RoleClaims",
@@ -218,6 +326,16 @@ namespace WebApi.Migrations
                 column: "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tests_OwnerId",
+                table: "Tests",
+                column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tests_SystemId",
+                table: "Tests",
+                column: "SystemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserClaims_UserId",
@@ -254,10 +372,10 @@ namespace WebApi.Migrations
                 name: "Admins");
 
             migrationBuilder.DropTable(
-                name: "Clients");
+                name: "PentesterPentrationTest");
 
             migrationBuilder.DropTable(
-                name: "Pentesters");
+                name: "PentestingMethodologyPentrationTest");
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
@@ -275,7 +393,22 @@ namespace WebApi.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
+                name: "Pentesters");
+
+            migrationBuilder.DropTable(
+                name: "PentestingMethodology");
+
+            migrationBuilder.DropTable(
+                name: "Tests");
+
+            migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Clients");
+
+            migrationBuilder.DropTable(
+                name: "TargetSystem");
 
             migrationBuilder.DropTable(
                 name: "Users");

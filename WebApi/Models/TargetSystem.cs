@@ -6,6 +6,6 @@ namespace WebApi.Models
     public class TargetSystem
     {
         public required string Name { get; set; }
-        public DbSet<PentrationTest>? Tests { get; set; }
+        public ICollection<PentrationTest> Tests { get; set; } = new List<PentrationTest>();
     }
 }

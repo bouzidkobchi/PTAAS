@@ -9,16 +9,16 @@ namespace WebApi.Models
         public int Id { get; set; }
         public required TargetSystem System { get; set; }
         public required string SystemId { get; set; }
-        
-        public List<PentestingMethodology>? Methodology { get; set; }
+        public ICollection<PentestingMethodology> Methodologies { get; set; } = new List<PentestingMethodology>();
         public TestStatus Status { get; set; }
         public DateTime CreationTime { get; set; }
         public DateTime ScheduleTime { get; set; }
         public required Client Owner { get; set; }
         public required string OwnerId { get; set; }
-        public DbSet<Pentester>? Pentesters { get; set; }
+        public ICollection<Pentester> Pentesters { get; set; } = new List<Pentester>();
         // target system x
-        // scope
+        // scope :
+        // ip ranges , 
         // methodologies x
         // status x
         // scheduletime x
