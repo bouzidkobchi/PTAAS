@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebApi.Data;
-using WebApi.Models;
 
 namespace WebApi.Repositories
 {
@@ -11,16 +10,12 @@ namespace WebApi.Repositories
         {
             _context = context;
         }
+
         public string Create(T item)
         {
             _context.Add(item);
             _context.SaveChanges();
             return item.Id;
-        }
-        public virtual void Add(T entity)
-        {
-            _context.Set<T>().Add(entity);
-            _context.SaveChanges();
         }
 
         public virtual void Delete(T entity)
@@ -28,6 +23,7 @@ namespace WebApi.Repositories
             _context.Set<T>().Remove(entity);
             _context.SaveChanges();
         }
+
         public virtual void Delete(string id)
         {
             var itemToDelete = this.Get(id);
@@ -50,12 +46,18 @@ namespace WebApi.Repositories
 
         public virtual IEnumerable<T> GetAll()
         {
-            return _context.Set<T>().ToList();
+            return _context.Set<T>()
+                           .AsNoTracking()
+                           .ToList();
         }
 
         public virtual IEnumerable<T> GetPage(int page, int pageSize)
         {
-            return _context.Set<T>().Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            return _context.Set<T>()
+                           .AsNoTracking()
+                           .Skip((page - 1) * pageSize)
+                           .Take(pageSize)
+                           .ToList();
         }
     }
 }
