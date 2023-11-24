@@ -12,18 +12,7 @@ namespace WebApi.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "PentestingMethodology",
-                columns: table => new
-                {
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PentestingMethodology", x => x.Name);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Roles",
+                name: "AspNetRoles",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -33,7 +22,18 @@ namespace WebApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PentestingMethodology",
+                columns: table => new
+                {
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PentestingMethodology", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -86,9 +86,26 @@ namespace WebApi.Migrations
                 {
                     table.PrimaryKey("PK_RoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RoleClaims_Roles_RoleId",
+                        name: "FK_RoleClaims_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "Roles",
+                        principalTable: "AspNetRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Roles_AspNetRoles_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -197,9 +214,9 @@ namespace WebApi.Migrations
                 {
                     table.PrimaryKey("PK_UserRoles", x => new { x.UserId, x.RoleId });
                     table.ForeignKey(
-                        name: "FK_UserRoles_Roles_RoleId",
+                        name: "FK_UserRoles_AspNetRoles_RoleId",
                         column: x => x.RoleId,
-                        principalTable: "Roles",
+                        principalTable: "AspNetRoles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -234,8 +251,7 @@ namespace WebApi.Migrations
                 name: "Tests",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     SystemId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Status = table.Column<byte>(type: "tinyint", nullable: false),
                     CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -258,11 +274,38 @@ namespace WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Findings",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Severity = table.Column<byte>(type: "tinyint", nullable: false),
+                    FounderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    TestId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Findings", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Findings_Tests_TestId",
+                        column: x => x.TestId,
+                        principalTable: "Tests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Findings_Users_FounderId",
+                        column: x => x.FounderId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PentesterPentrationTest",
                 columns: table => new
                 {
                     PentestersId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TokenTestsId = table.Column<int>(type: "int", nullable: false)
+                    TokenTestsId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -286,7 +329,7 @@ namespace WebApi.Migrations
                 columns: table => new
                 {
                     MethodologiesName = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    TestsId = table.Column<int>(type: "int", nullable: false)
+                    TestsId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -306,6 +349,23 @@ namespace WebApi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "RoleNameIndex",
+                table: "AspNetRoles",
+                column: "NormalizedName",
+                unique: true,
+                filter: "[NormalizedName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Findings_FounderId",
+                table: "Findings",
+                column: "FounderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Findings_TestId",
+                table: "Findings",
+                column: "TestId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PentesterPentrationTest_TokenTestsId",
                 table: "PentesterPentrationTest",
                 column: "TokenTestsId");
@@ -319,13 +379,6 @@ namespace WebApi.Migrations
                 name: "IX_RoleClaims_RoleId",
                 table: "RoleClaims",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "RoleNameIndex",
-                table: "Roles",
-                column: "NormalizedName",
-                unique: true,
-                filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tests_OwnerId",
@@ -372,6 +425,9 @@ namespace WebApi.Migrations
                 name: "Admins");
 
             migrationBuilder.DropTable(
+                name: "Findings");
+
+            migrationBuilder.DropTable(
                 name: "PentesterPentrationTest");
 
             migrationBuilder.DropTable(
@@ -379,6 +435,9 @@ namespace WebApi.Migrations
 
             migrationBuilder.DropTable(
                 name: "RoleClaims");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "UserClaims");
@@ -402,7 +461,7 @@ namespace WebApi.Migrations
                 name: "Tests");
 
             migrationBuilder.DropTable(
-                name: "Roles");
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Clients");

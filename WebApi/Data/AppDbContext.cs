@@ -6,12 +6,13 @@ using WebApi.Models;
 
 namespace WebApi.Data
 {
-    public class AppDbContext : IdentityDbContext<ApplicationUser>
+    public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<string>, string>
     {
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Pentester> Pentesters { get; set; }
         public DbSet<Client> Clients { get; set; }
         public DbSet<PentrationTest> Tests { get; set; }
+        public DbSet<Finding> Findings { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var config = new ConfigurationBuilder()
@@ -48,9 +49,9 @@ namespace WebApi.Data
             modelBuilder.AddClientEntity();
             modelBuilder.AddPentesterEntity();
             modelBuilder.AddPentrationTestEntity();
-            //modelBuilder.AddPentesterTestEntity();
             modelBuilder.AddTargetSystemEntity();
             modelBuilder.AddPentestingMethodologyEntity();
+            modelBuilder.AddFindingEntity();
         }
     }
 }

@@ -22,7 +22,7 @@ namespace WebApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<string>", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -46,7 +46,9 @@ namespace WebApi.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.UseTptMappingStrategy();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -160,8 +162,8 @@ namespace WebApi.Migrations
                     b.Property<string>("PentestersId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("TokenTestsId")
-                        .HasColumnType("int");
+                    b.Property<string>("TokenTestsId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("PentestersId", "TokenTestsId");
 
@@ -175,8 +177,8 @@ namespace WebApi.Migrations
                     b.Property<string>("MethodologiesName")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("TestsId")
-                        .HasColumnType("int");
+                    b.Property<string>("TestsId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("MethodologiesName", "TestsId");
 
@@ -252,6 +254,34 @@ namespace WebApi.Migrations
                     b.UseTptMappingStrategy();
                 });
 
+            modelBuilder.Entity("WebApi.Models.Finding", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FounderId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<byte>("Severity")
+                        .HasColumnType("tinyint");
+
+                    b.Property<string>("TestId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FounderId");
+
+                    b.HasIndex("TestId");
+
+                    b.ToTable("Findings");
+                });
+
             modelBuilder.Entity("WebApi.Models.PentestingMethodology", b =>
                 {
                     b.Property<string>("Name")
@@ -264,11 +294,8 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("WebApi.Models.PentrationTest", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("datetime2");
@@ -306,6 +333,13 @@ namespace WebApi.Migrations
                     b.ToTable("TargetSystem");
                 });
 
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityRole<string>");
+
+                    b.ToTable("Roles", (string)null);
+                });
+
             modelBuilder.Entity("WebApi.Models.Admin", b =>
                 {
                     b.HasBaseType("WebApi.Models.ApplicationUser");
@@ -332,7 +366,7 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<string>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -359,7 +393,7 @@ namespace WebApi.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<string>", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -411,6 +445,25 @@ namespace WebApi.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("WebApi.Models.Finding", b =>
+                {
+                    b.HasOne("WebApi.Models.ApplicationUser", "Founder")
+                        .WithMany()
+                        .HasForeignKey("FounderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WebApi.Models.PentrationTest", "Test")
+                        .WithMany("Findings")
+                        .HasForeignKey("TestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Founder");
+
+                    b.Navigation("Test");
+                });
+
             modelBuilder.Entity("WebApi.Models.PentrationTest", b =>
                 {
                     b.HasOne("WebApi.Models.Client", "Owner")
@@ -428,6 +481,15 @@ namespace WebApi.Migrations
                     b.Navigation("Owner");
 
                     b.Navigation("System");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<string>", null)
+                        .WithOne()
+                        .HasForeignKey("Microsoft.AspNetCore.Identity.IdentityRole", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WebApi.Models.Admin", b =>
@@ -455,6 +517,11 @@ namespace WebApi.Migrations
                         .HasForeignKey("WebApi.Models.Pentester", "Id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("WebApi.Models.PentrationTest", b =>
+                {
+                    b.Navigation("Findings");
                 });
 
             modelBuilder.Entity("WebApi.Models.TargetSystem", b =>

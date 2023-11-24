@@ -1,10 +1,12 @@
-﻿using WebApi.Enums;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using WebApi.Enums;
+using WebApi.Repositories;
 
 namespace WebApi.Models
 {
-    public class Finding
+    public class Finding : IHasId
     {
-        public int Id { get; set; }
+        public required string Id { get; set; }
         public string? Description { get; set; }
         public Severity Severity { get; set; }
         public required string FounderId { get; set; }

@@ -1,25 +1,61 @@
-﻿using WebApi.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using WebApi.Data;
 using WebApi.Models;
 
 namespace WebApi.Repositories
 {
-    public class BaseRepository<TClass , Tkey> where TClass : class
+    public class BaseRepository<T> where T : class,IHasId
     {
         private readonly AppDbContext _context;
         public BaseRepository(AppDbContext context)
         {
             _context = context;
         }
-
-        public Tkey? Create(TClass item, Func<TClass,Tkey> ReturnIdDelegate)
+        public string Create(T item)
         {
-            if (item is not null)
-                _context.Add(item);
-            else
-                return default;
-
+            _context.Add(item);
             _context.SaveChanges();
-            return ReturnIdDelegate(item);
+            return item.Id;
+        }
+        public virtual void Add(T entity)
+        {
+            _context.Set<T>().Add(entity);
+            _context.SaveChanges();
+        }
+
+        public virtual void Delete(T entity)
+        {
+            _context.Set<T>().Remove(entity);
+            _context.SaveChanges();
+        }
+        public virtual void Delete(string id)
+        {
+            var itemToDelete = this.Get(id);
+            if (itemToDelete != null)
+            {
+                this.Delete(itemToDelete);
+            }
+        }
+
+        public virtual void Update(T entity)
+        {
+            _context.Set<T>().Update(entity);
+            _context.SaveChanges();
+        }
+
+        public virtual T? Get(string id)
+        {
+            return _context.Set<T>().Find(id);
+        }
+
+        public virtual IEnumerable<T> GetAll()
+        {
+            return _context.Set<T>().ToList();
+        }
+
+        public virtual IEnumerable<T> GetPage(int page, int pageSize)
+        {
+            return _context.Set<T>().Skip((page - 1) * pageSize).Take(pageSize).ToList();
         }
     }
 }
