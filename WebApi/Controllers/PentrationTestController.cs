@@ -1,19 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
 using WebApi.Data;
 using WebApi.Models;
 using WebApi.Repositories;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WebApi.Controllers
 {
+    [Tags("pentration tests")]
     [Route("tests")]
-    public class PentrationTestController : ControllerBase
+    [ApiController]
+    public partial class PentrationTestController : ControllerBase
     {
-        private readonly BaseRepository<PentrationTest> _pentrationTestRepository;
+        private readonly PentrationTestRepository _pentrationTestRepository;
 
         public PentrationTestController(AppDbContext context)
         {
-            _pentrationTestRepository = new BaseRepository<PentrationTest>(context);
+            _pentrationTestRepository = new PentrationTestRepository(context);
         }
 
         [HttpGet]
@@ -34,6 +36,15 @@ namespace WebApi.Controllers
             }
 
             return Ok(test);
+        }
+
+        /// <summary>
+        /// not implemented
+        /// </summary>
+        [HttpGet("{id}/findings")]
+        public IActionResult GetPentrationTestFindings(string id)
+        {
+            throw new NotImplementedException();
         }
 
         [HttpPost]
@@ -83,6 +94,52 @@ namespace WebApi.Controllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// not implemented
+        /// </summary>
+        [HttpGet("on-hold")]
+        public IActionResult GetAll_OnHold()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// not implemented
+        /// </summary>
+        [HttpGet("cancelled")]
+        public IActionResult GetAll_Cancelled()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// not implemented
+        /// </summary>
+        [HttpGet("scheduled")]
+        public IActionResult GetAll_Scheduled()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// not implemented
+        /// </summary>
+        [HttpGet("completed")]
+        public IActionResult GetAll_Completed()
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// not implemented
+        /// </summary>
+        [HttpGet("in-progress")]
+        public IActionResult GetAll_InProgress()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 
 }

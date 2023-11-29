@@ -5,10 +5,11 @@ using WebApi.Repositories;
 
 namespace WebApi.Controllers
 {
+    [Tags("pentration methodologies")]
     [Route("methodologies")]
     public class PentestingMethodologyController : ControllerBase
     {
-        private readonly BaseRepository<PentestingMethodology> _PentestingMethodologyRepository;
+        private readonly PentestingMethodologyRepository _PentestingMethodologyRepository;
 
         public PentestingMethodologyController(AppDbContext context)
         {
@@ -18,7 +19,7 @@ namespace WebApi.Controllers
         [HttpGet]
         public IActionResult GetAllMethodologies()
         {
-            var methodologies = _PentestingMethodologyRepository.GetAll();
+            var methodologies = _PentestingMethodologyRepository.GetAllAsDTOs();
             return Ok(methodologies);
         }
 
@@ -33,40 +34,43 @@ namespace WebApi.Controllers
             }
 
             return Ok(PentestingMethodology);
+
         }
 
         [HttpPost]
-        public IActionResult CreatePentestingMethodology([FromBody] PentestingMethodology PentestingMethodology)
+        public IActionResult CreatePentestingMethodology([FromBody] PentestingMethodologyDTO pentestingMethodology)
         {
-            if (PentestingMethodology == null)
+            if (pentestingMethodology == null)
             {
                 return BadRequest();
             }
+            var method = pentestingMethodology.ToPentestingMethodology();
+            var createdId = _PentestingMethodologyRepository.Create(method);
 
-            var createdId = _PentestingMethodologyRepository.Create(PentestingMethodology);
-
-            return Created($"/methodologies/{createdId}", PentestingMethodology);
+            return Created($"/methodologies/{createdId}", method);
         }
 
-        [HttpPut("{id}")]
-        public IActionResult UpdatePentestingMethodology(string id, [FromBody] PentestingMethodology PentestingMethodology)
-        {
-            if (PentestingMethodology == null || PentestingMethodology.Id != id)
-            {
-                return BadRequest();
-            }
+        //[HttpPut("{id}")] // no need for it
+        //public IActionResult UpdatePentestingMethodology(string id, [FromBody] PentestingMethodologyDTO pentestingMethodology)
+        //{
+        //    if (pentestingMethodology == null)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            var existingPentestingMethodology = _PentestingMethodologyRepository.Get(id);
+        //    var existingPentestingMethodology = _PentestingMethodologyRepository.Get(id);
 
-            if (existingPentestingMethodology == null)
-            {
-                return NotFound();
-            }
+        //    if (existingPentestingMethodology == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _PentestingMethodologyRepository.Update(PentestingMethodology);
+        //    existingPentestingMethodology.Name = pentestingMethodology.Name;
 
-            return NoContent();
-        }
+        //    _PentestingMethodologyRepository.Update(existingPentestingMethodology);
+
+        //    return NoContent();
+        //}
 
         [HttpDelete("{id}")]
         public IActionResult DeletePentestingMethodology(string id)
@@ -82,6 +86,16 @@ namespace WebApi.Controllers
 
             return NoContent();
         }
+
+        /// <summary>
+        /// not implemented
+        /// </summary>
+        [HttpGet("{id}/tests")]
+        public IActionResult GetPentestingMethodologyTests(string id)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 
 }

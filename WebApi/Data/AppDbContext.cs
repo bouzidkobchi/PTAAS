@@ -13,6 +13,7 @@ namespace WebApi.Data
         public DbSet<Client> Clients { get; set; }
         public DbSet<PentrationTest> Tests { get; set; }
         public DbSet<Finding> Findings { get; set; }
+        public DbSet<PentestingMethodology> PentestingMethodologies { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var config = new ConfigurationBuilder()

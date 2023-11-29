@@ -5,7 +5,7 @@ namespace WebApi.Repositories
 {
     public class BaseRepository<T> where T : class,IHasId
     {
-        private readonly AppDbContext _context;
+        protected readonly AppDbContext _context;
         public BaseRepository(AppDbContext context)
         {
             _context = context;
