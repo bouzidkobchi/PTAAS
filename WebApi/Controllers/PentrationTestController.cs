@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
 using WebApi.Data;
+using WebApi.Enums;
 using WebApi.Models;
 using WebApi.Repositories;
+
+/*
+ * don't forget to add pagination to findings and methodology controller !!
+ */
 
 namespace WebApi.Controllers
 {
@@ -11,24 +16,26 @@ namespace WebApi.Controllers
     [ApiController]
     public partial class PentrationTestController : ControllerBase
     {
-        private readonly PentrationTestRepository _pentrationTestRepository;
+        private readonly PentrationTestRepository pentrationTestRepository;
+        private readonly FindingRepository findingRepository;
 
         public PentrationTestController(AppDbContext context)
         {
-            _pentrationTestRepository = new PentrationTestRepository(context);
+            pentrationTestRepository = new PentrationTestRepository(context);
+            findingRepository = new FindingRepository(context);
         }
 
         [HttpGet]
         public IActionResult GetAllPentrationTests()
         {
-            var tests = _pentrationTestRepository.GetAll();
+            var tests = pentrationTestRepository.GetAll();
             return Ok(tests);
         }
 
         [HttpGet("{id}")]
         public IActionResult GetPentrationTest(string id)
         {
-            var test = _pentrationTestRepository.Get(id);
+            var test = pentrationTestRepository.Get(id);
 
             if (test == null)
             {
@@ -38,14 +45,26 @@ namespace WebApi.Controllers
             return Ok(test);
         }
 
-        /// <summary>
-        /// not implemented
-        /// </summary>
         [HttpGet("{id}/findings")]
-        public IActionResult GetPentrationTestFindings(string id)
+        public IActionResult GetFindings(string testId)
         {
-            throw new NotImplementedException();
+            return Ok(pentrationTestRepository.Findings(testId));
         }
+
+        [HttpPost("{id}/findings")]
+        public IActionResult PostFindings(string testId ,[FromBody] FindingDTO finding)
+        {
+            if(finding.TestId != testId)
+            {
+                return BadRequest("The TestId in the request path does not match the TestId in the payload.");
+            }
+
+            var newFinding = finding.ToFinding();
+            findingRepository.Create(newFinding);
+
+            return Created($"/{testId}/findings/{newFinding.Id}", finding);
+        }
+
 
         [HttpPost]
         public IActionResult CreatePentrationTest([FromBody] PentrationTest test)
@@ -55,7 +74,7 @@ namespace WebApi.Controllers
                 return BadRequest();
             }
 
-            var createdId = _pentrationTestRepository.Create(test);
+            var createdId = pentrationTestRepository.Create(test);
 
             return Created($"/tests/{createdId}", test);
         }
@@ -68,14 +87,14 @@ namespace WebApi.Controllers
                 return BadRequest();
             }
 
-            var existingTest = _pentrationTestRepository.Get(id);
+            var existingTest = pentrationTestRepository.Get(id);
 
             if (existingTest == null)
             {
                 return NotFound();
             }
 
-            _pentrationTestRepository.Update(test);
+            pentrationTestRepository.Update(test);
 
             return NoContent();
         }
@@ -83,61 +102,60 @@ namespace WebApi.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeletePentrationTest(string id)
         {
-            var test = _pentrationTestRepository.Get(id);
+            var test = pentrationTestRepository.Get(id);
 
             if (test == null)
             {
                 return NotFound();
             }
 
-            _pentrationTestRepository.Delete(test);
+            pentrationTestRepository.Delete(test);
 
             return NoContent();
         }
 
-        /// <summary>
-        /// not implemented
-        /// </summary>
         [HttpGet("on-hold")]
         public IActionResult GetAll_OnHold()
         {
-            throw new NotImplementedException();
+            return Ok(pentrationTestRepository.SelectStatus(TestStatus.OnHold));
         }
 
-        /// <summary>
-        /// not implemented
-        /// </summary>
         [HttpGet("cancelled")]
         public IActionResult GetAll_Cancelled()
         {
-            throw new NotImplementedException();
+            return Ok(pentrationTestRepository.SelectStatus(TestStatus.Cancelled));
         }
 
-        /// <summary>
-        /// not implemented
-        /// </summary>
         [HttpGet("scheduled")]
         public IActionResult GetAll_Scheduled()
         {
-            throw new NotImplementedException();
+            return Ok(pentrationTestRepository.SelectStatus(TestStatus.Scheduled));
         }
 
-        /// <summary>
-        /// not implemented
-        /// </summary>
         [HttpGet("completed")]
         public IActionResult GetAll_Completed()
         {
-            throw new NotImplementedException();
+            return Ok(pentrationTestRepository.SelectStatus(TestStatus.Completed));
         }
 
-        /// <summary>
-        /// not implemented
-        /// </summary>
         [HttpGet("in-progress")]
         public IActionResult GetAll_InProgress()
         {
-            throw new NotImplementedException();
+            return Ok(pentrationTestRepository.SelectStatus(TestStatus.InProgress));
+        }
+
+        /// <summary>
+        /// not tested
+        /// </summary>
+        [HttpPut("change-status")]
+        public IActionResult ChangeStatus(string id , TestStatus newStatus)
+        {
+            var selectedTest = pentrationTestRepository.Get(id);
+            if (selectedTest != null)
+            {
+                selectedTest.Status = newStatus;
+            }
+            return Ok(selectedTest);
         }
 
     }

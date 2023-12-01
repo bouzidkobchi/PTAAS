@@ -1,15 +1,33 @@
 ﻿using WebApi.Data;
 using WebApi.Enums;
 using WebApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace WebApi.Repositories
 {
     public class PentrationTestRepository : BaseRepository<PentrationTest>
     {
         public PentrationTestRepository(AppDbContext context) : base(context) { }
-        public List<PentrationTest> GetAllRequestedTests()
+
+        public List<Finding>? Findings(string testId)
         {
-            return _context.Tests.Where(t => t.Status == TestStatus.OnHold).ToList();
+            var selected_finding = _context.Tests
+                                    .AsNoTracking()
+                                    .Include(t => t.Findings)
+                                    .FirstOrDefault(t => t.Id == testId);
+
+            if (selected_finding == null)
+                return null;
+
+            return selected_finding.Findings.ToList();
+        }
+
+        public List<PentrationTest> SelectStatus(TestStatus status)
+        {
+            return _context.Tests
+                    .AsNoTracking().
+                    Where(t => t.Status == status)
+                    .ToList();
         }
     }
 }
