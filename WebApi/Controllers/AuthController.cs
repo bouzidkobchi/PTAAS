@@ -18,6 +18,8 @@ using WebApi.Models;
  * GET /api/user
  * PUT /api/user
  * 
+ * 
+ * nots : the admin is a pentester by the way !
  */
 
 namespace WebApi.Controllers

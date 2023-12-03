@@ -6,7 +6,7 @@ using WebApi.Repositories;
 namespace WebApi.Controllers
 {
     [Tags("pentration methodologies")]
-    [Route("methodologies")]
+    [Route("api/methodologies")]
     public class PentestingMethodologyController : ControllerBase
     {
         private readonly PentestingMethodologyRepository _PentestingMethodologyRepository;

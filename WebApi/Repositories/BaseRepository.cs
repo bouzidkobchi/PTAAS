@@ -3,7 +3,7 @@ using WebApi.Data;
 
 namespace WebApi.Repositories
 {
-    public class BaseRepository<T> where T : class,IHasId
+    public class BaseRepository<T> where T : class , IHasId
     {
         protected readonly AppDbContext _context;
         public BaseRepository(AppDbContext context)

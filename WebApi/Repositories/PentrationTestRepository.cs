@@ -22,13 +22,16 @@ namespace WebApi.Repositories
             return selected_finding.Findings.ToList();
         }
 
-        public List<PentrationTest> SelectStatus(TestStatus status)
+        public List<PentrationTest> SelectStatus(TestStatus status, int pageNumber = 1, int pageSize = 10)
         {
             return _context.Tests
-                    .AsNoTracking().
-                    Where(t => t.Status == status)
-                    .ToList();
+                           .AsNoTracking()
+                           .Where(t => t.Status == status)
+                           .Skip((pageNumber - 1) * pageSize)
+                           .Take(pageSize)
+                           .ToList();
         }
+
     }
 }
 
