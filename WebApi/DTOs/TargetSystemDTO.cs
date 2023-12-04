@@ -1,4 +1,6 @@
-﻿namespace WebApi.Models
+﻿using WebApi.Models;
+
+namespace WebApi.DTOs
 {
     public class TargetSystemDTO
     {

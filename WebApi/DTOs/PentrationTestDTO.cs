@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebApi.Enums;
+using WebApi.Models;
 using WebApi.Repositories;
 
-namespace WebApi.Models
+namespace WebApi.DTOs
 {
     public class PentrationTestDTO
     {
@@ -23,10 +24,10 @@ namespace WebApi.Models
             {
                 Id = Id,
                 SystemId = SystemId,
-                Methodologies = this.Methodologies,
-                CreationTime = this.CreationTime,
-                OwnerId = this.OwnerId,
-                Pentesters = this.Pentesters
+                Methodologies = Methodologies,
+                CreationTime = CreationTime,
+                OwnerId = OwnerId,
+                Pentesters = Pentesters
             };
         }
     }

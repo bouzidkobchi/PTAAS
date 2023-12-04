@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WebApi.Enums;
+using WebApi.Models;
 
-namespace WebApi.Models
+namespace WebApi.DTOs
 {
     public class FindingDTO
     {

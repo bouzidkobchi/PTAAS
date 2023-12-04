@@ -51,11 +51,11 @@ namespace WebApi.Repositories
                            .ToList();
         }
 
-        public virtual IEnumerable<T> GetPage(int page, int pageSize)
+        public virtual IEnumerable<T> GetPage(int pageNumber = 1, int pageSize = 10)
         {
             return _context.Set<T>()
                            .AsNoTracking()
-                           .Skip((page - 1) * pageSize)
+                           .Skip((pageNumber - 1) * pageSize)
                            .Take(pageSize)
                            .ToList();
         }

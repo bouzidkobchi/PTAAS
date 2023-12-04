@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebApi.Enums;
 using WebApi.Repositories;
@@ -18,13 +19,16 @@ namespace WebApi.Models
         public required string OwnerId { get; set; }
         public ICollection<Pentester> Pentesters { get; set; } = new List<Pentester>();
         public ICollection<Finding> Findings { get; set; } = new List<Finding>();
-        // target system x
         // scope :
-        // ip ranges , 
-        // methodologies x
-        // status x
-        // scheduletime x
-        // creationtime x
-        // report / reports
+        // ip ranges ,
+        // report file path
+
+        // the scope :
+        //public string IpRangeStart { get; set; }
+        //public string IpRangeEnd { get; set; }
+        //public string[] Protocols { get; set; }
+        //[Length(20,500)]
+        //public string TestObjective { get; set; }
     }
+
 }

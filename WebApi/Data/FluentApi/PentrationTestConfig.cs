@@ -19,6 +19,8 @@ namespace WebApi.Data.FluentApi
                 .HasForeignKey(t => t.OwnerId)
                 .OnDelete(DeleteBehavior.NoAction);
 
+            pentrationTestEntity.HasIndex(t => t.Status);
+
             return modelBuilder;
         }
     }
