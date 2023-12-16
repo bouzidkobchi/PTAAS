@@ -34,5 +34,11 @@ namespace WebApi.Controllers
             return Created($"/systems/{systemId}", system);
         }
 
+        [HttpGet("{id}/tests")]
+        public IActionResult GetTest(string id) { throw  new NotImplementedException(); }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(string id) {  throw new NotImplementedException(); }
+
     }
 }

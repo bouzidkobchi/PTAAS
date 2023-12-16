@@ -26,14 +26,14 @@ namespace WebApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PentestingMethodology",
+                name: "PentestingMethodologies",
                 columns: table => new
                 {
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PentestingMethodology", x => x.Name);
+                    table.PrimaryKey("PK_PentestingMethodologies", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -335,9 +335,9 @@ namespace WebApi.Migrations
                 {
                     table.PrimaryKey("PK_PentestingMethodologyPentrationTest", x => new { x.MethodologiesName, x.TestsId });
                     table.ForeignKey(
-                        name: "FK_PentestingMethodologyPentrationTest_PentestingMethodology_MethodologiesName",
+                        name: "FK_PentestingMethodologyPentrationTest_PentestingMethodologies_MethodologiesName",
                         column: x => x.MethodologiesName,
-                        principalTable: "PentestingMethodology",
+                        principalTable: "PentestingMethodologies",
                         principalColumn: "Name",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -384,6 +384,11 @@ namespace WebApi.Migrations
                 name: "IX_Tests_OwnerId",
                 table: "Tests",
                 column: "OwnerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tests_Status",
+                table: "Tests",
+                column: "Status");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tests_SystemId",
@@ -455,7 +460,7 @@ namespace WebApi.Migrations
                 name: "Pentesters");
 
             migrationBuilder.DropTable(
-                name: "PentestingMethodology");
+                name: "PentestingMethodologies");
 
             migrationBuilder.DropTable(
                 name: "Tests");

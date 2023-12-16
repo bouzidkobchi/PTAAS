@@ -318,6 +318,8 @@ namespace WebApi.Migrations
 
                     b.HasIndex("OwnerId");
 
+                    b.HasIndex("Status");
+
                     b.HasIndex("SystemId");
 
                     b.ToTable("Tests");

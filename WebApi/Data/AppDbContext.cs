@@ -14,6 +14,7 @@ namespace WebApi.Data
         public DbSet<PentrationTest> Tests { get; set; }
         public DbSet<Finding> Findings { get; set; }
         public DbSet<PentestingMethodology> PentestingMethodologies { get; set; }
+        public DbSet<IdentityRole> Roles { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var config = new ConfigurationBuilder()

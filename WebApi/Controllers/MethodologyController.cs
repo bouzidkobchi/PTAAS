@@ -27,7 +27,7 @@ namespace WebApi.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult GetPage(int pageNumber, int pageSize)
+        public IActionResult GetPage(int pageNumber = 1, int pageSize = 10)
         {
             var methodologies = _PentestingMethodologyRepository.GetPage(pageNumber, pageSize);
             return Ok(methodologies);
@@ -117,7 +117,7 @@ namespace WebApi.Controllers
         [HttpGet("{id}/tests")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetPage_Tests(string id, int pageNumber , int pageSize)
+        public IActionResult GetTests(string id, int pageNumber , int pageSize)
         {
             var tests = _PentestingMethodologyRepository.GetPage_Tests(id,pageNumber,pageSize);
 

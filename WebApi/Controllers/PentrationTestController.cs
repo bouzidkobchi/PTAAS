@@ -6,6 +6,10 @@ using WebApi.Enums;
 using WebApi.Repositories;
 
 /*
+ * rewrite the update methods
+ */
+
+/*
  * don't forget to add pagination to findings and methodology controller !!
  * remember to add the indexing to the test status attribute
  * add authentication & autorization
@@ -13,6 +17,10 @@ using WebApi.Repositories;
  * add model validation (add the length and the model attributes validations)
  * documentation
  * make your foreignkeys indexed
+ */
+
+/*
+ * POST /test need for a DTO
  */
 
 /*
@@ -140,7 +148,7 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult UpdatePentrationTest(string id, [FromBody] PentrationTestDTO test)
+        public IActionResult Update(string id, [FromBody] PentrationTestDTO test)
         {
             try
             {
@@ -178,7 +186,7 @@ namespace WebApi.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult DeletePentrationTest(string id)
+        public IActionResult Delete(string id)
         {
             try
             {

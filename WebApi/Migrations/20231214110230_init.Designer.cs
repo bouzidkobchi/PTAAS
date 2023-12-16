@@ -12,7 +12,7 @@ using WebApi.Data;
 namespace WebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20231122141624_init")]
+    [Migration("20231214110230_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -292,7 +292,7 @@ namespace WebApi.Migrations
 
                     b.HasKey("Name");
 
-                    b.ToTable("PentestingMethodology");
+                    b.ToTable("PentestingMethodologies");
                 });
 
             modelBuilder.Entity("WebApi.Models.PentrationTest", b =>
@@ -320,6 +320,8 @@ namespace WebApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("Status");
 
                     b.HasIndex("SystemId");
 
