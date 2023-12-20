@@ -1,4 +1,4 @@
-﻿namespace WebApi.Helpers
+﻿namespace WebApi.Auth.Helpers
 {
     public class JWT
     {

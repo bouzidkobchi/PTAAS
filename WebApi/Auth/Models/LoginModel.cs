@@ -1,12 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebApi.Models
+namespace WebApi.Auth
 {
-
-    public class RegisterModel
+    public class LoginModel
     {
-        [Required]
-        public string UserName { get; set; }
         [Required]
         public string Email { get; set; }
         [Required]

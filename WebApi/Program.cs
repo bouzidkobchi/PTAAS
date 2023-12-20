@@ -6,11 +6,11 @@ using Microsoft.OpenApi.Models;
 using System.Configuration;
 using System.Reflection;
 using System.Text;
+using WebApi.Auth.Helpers;
+using WebApi.Auth.Services;
 using WebApi.Data;
-using WebApi.Helpers;
 using WebApi.Models;
 using WebApi.Repositories;
-using WebApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +43,8 @@ builder.Services.AddSwaggerGen(option =>
         BearerFormat = "JWT",
         Scheme = "Bearer",
     });
+
+    /* To Do */
     option.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -60,25 +62,15 @@ builder.Services.AddSwaggerGen(option =>
 
 });
 
-//builder.Services.Configure<JWT>(x =>
-//{
-//    x.Key = builder.Configuration["JWT:Key"] ?? throw new Exception("JWT Key is not icluded in appsettings.json ");
-//    x.Issuer = builder.Configuration["JWT:Issuer"] ?? throw new Exception("JWT Issuer is not icluded in appsettings.json ");
-//    x.Issuer = builder.Configuration["JWT:Audience"] ?? throw new Exception("JWT Audience is not icluded in appsettings.json ");
-//});
-
-//var jwt = builder.Configuration.GetSection("JWT").Get<JWT>() ?? throw new Exception("JWT is not included in appsettings.json");
-
 builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<RoleManager<IdentityRole>>();
-//builder.Services.AddSingleton<JWT>();
+builder.Services.AddScoped<RoleManager<ApplicationRole>>();
 
 // Adding application db context
 builder.Services.AddDbContext<AppDbContext>();
 
 // Adding identity
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>(Options =>
+builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(Options =>
 {
     Options.Password.RequiredLength = 0;
     Options.Password.RequireNonAlphanumeric = false;
@@ -101,7 +93,7 @@ builder.Services.AddAuthentication(options =>
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey
-        (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new Exception("JWT Key is not implemented ") )),
+        (Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new Exception("JWT Key is not icluded in appsettings.json ") )),
         ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
 
-namespace WebApi.Models
+namespace WebApi.Auth
 {
     public class AuthModel
     {

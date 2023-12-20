@@ -6,7 +6,7 @@ using WebApi.Models;
 
 namespace WebApi.Data
 {
-    public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<string>, string>
+    public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
         public DbSet<Admin> Admins { get; set; }
         public DbSet<Pentester> Pentesters { get; set; }
@@ -14,7 +14,7 @@ namespace WebApi.Data
         public DbSet<PentrationTest> Tests { get; set; }
         public DbSet<Finding> Findings { get; set; }
         public DbSet<PentestingMethodology> PentestingMethodologies { get; set; }
-        public DbSet<IdentityRole> Roles { get; set; }
+        public DbSet<ApplicationRole> Roles { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var config = new ConfigurationBuilder()
@@ -40,7 +40,7 @@ namespace WebApi.Data
             modelBuilder.Entity<Client>().ToTable("Clients");
             modelBuilder.Entity<Pentester>().ToTable("Pentesters");
 
-            modelBuilder.Entity<IdentityRole>().ToTable("Roles");
+            modelBuilder.Entity<ApplicationRole>().ToTable("Roles");
             modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
             modelBuilder.Entity<IdentityUserClaim<string>>().ToTable("UserClaims");
             modelBuilder.Entity<IdentityUserLogin<string>>().ToTable("UserLogins");
@@ -54,6 +54,12 @@ namespace WebApi.Data
             modelBuilder.AddTargetSystemEntity();
             modelBuilder.AddPentestingMethodologyEntity();
             modelBuilder.AddFindingEntity();
+        }
+
+        public ApplicationRole[] LoadRoles(string[] roles)
+        {
+            var loadedRoles = Roles.Where(r => roles.Contains(r.Name));
+            return loadedRoles.ToArray();
         }
     }
 }

@@ -1,10 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using NuGet.Protocol;
+using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
-using WebApi.Helpers;
+using WebApi.Auth;
+using WebApi.Auth.Helpers;
+using WebApi.Auth.Services;
+using WebApi.Data;
 using WebApi.Models;
-using WebApi.Services;
 
 /*
  * POST /api/register
@@ -191,6 +195,13 @@ using WebApi.Services;
 
 //}
 
+/*
+    problem of reading user roles from the  database , and the jwt  creation 
+    
+    refresh token
+    
+ */
+
 namespace WebApi.Controllers
 {
     [Tags("authentication")]
@@ -199,26 +210,16 @@ namespace WebApi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
-        private readonly IConfiguration _configuration;
+        private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly AuthService _authService;
-        //private readonly JWT _jwt;
 
         public AuthController(UserManager<ApplicationUser> userManager,
-                              SignInManager<ApplicationUser> signInManager,
-                              IConfiguration configuration,
-                              AuthService authService
-,
-                              RoleManager<IdentityRole> roleManager
-/*JWT jwt*/)
+                              AuthService authService,
+                              RoleManager<ApplicationRole> roleManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
-            _configuration = configuration;
             _authService = authService;
             _roleManager = roleManager;
-            //_jwt = jwt;
         }
 
         [HttpPost("register")]
@@ -253,14 +254,8 @@ namespace WebApi.Controllers
                 });
             }
 
-            //// default user role
-            //var newRole = new IdentityRole { Id = Guid.NewGuid().ToString(), Name = "User", NormalizedName = "USER", ConcurrencyStamp = Guid.NewGuid().ToString() };
-
-            //ArgumentNullException.ThrowIfNull(newRole);
-
-            //await _roleManager.CreateAsync(newRole);
-
             await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, "Admin");
 
             var jwtSecurityToken = await _authService.CreateJwtToken(user);
 
@@ -304,8 +299,10 @@ namespace WebApi.Controllers
 
         }
 
-        [Authorize(Roles = "User")]
-        [HttpGet("for-only-users")]
+        //[Authorize(Roles = "User")]
+        [HttpGet("for-only-users")] // null refrence exception
+        [Authorize]
+        [HasPermission(Permission.CanAssignTest)]
         public string ForOnlyUsers()
         {
             return "hello world";
@@ -324,6 +321,58 @@ namespace WebApi.Controllers
             {
                 return Unauthorized(); // or return a custom response based on your requirements
             }
+        }
+
+        //[AllowAnonymous]
+        //[HasPermission(Permission.CanAssignTest)]
+        //[HttpGet("/have-name-key")]
+        //public string CustomAuth()
+        //{
+        //    return "done";
+        //}
+
+        /// <summary>
+        /// Gets a custom authentication result.
+        /// </summary>
+        /// <returns>A string indicating the authentication result.</returns>
+        [AllowAnonymous]
+        [HasPermission(Permission.CanAssignTest)]
+        [HttpGet("have-name-key")]
+        [ProducesResponseType(200, Type = typeof(string))]
+        public IActionResult CustomAuth()
+        {
+            return Ok("done");
+        }
+
+        [HttpPost("create-new-role")]
+        public async Task<IActionResult> newRole([Required , FromQuery] string newRoleName)
+        {
+            var role = new ApplicationRole() { Id = Guid.NewGuid().ToString() , Name = newRoleName , Permissions = new List<Permission> { Permission.CanCreateUser , Permission.CanAssignTest } };
+
+            await _roleManager.CreateAsync(role);
+
+            return Ok($"{newRoleName} role created seccufuly !");
+        }
+
+        [HttpGet("get-roles")]
+        public IActionResult GetPermissionsAndRoles(AppDbContext context)
+        {
+            return Ok(context.Roles);
+        }
+
+        [HttpDelete("remove-permission-from-role")]
+        public async Task<IActionResult> DeletePermissionFromRole(string role , Permission permission)
+        {
+            var context = new AppDbContext();
+            //var roleObject = await _roleManager.FindByNameAsync(role);
+            var roleObject = context.Roles.First(r => r.Name==role);
+            if (roleObject == null)
+            {
+                return BadRequest("role not found !");
+            }
+            roleObject.Permissions.Remove(permission);
+            context.SaveChanges();
+            return Ok($"permission\'{permission}\' removed seccufuly from the role \'{role}\'");
         }
 
     }
