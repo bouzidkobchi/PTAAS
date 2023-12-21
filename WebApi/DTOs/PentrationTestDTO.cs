@@ -10,10 +10,10 @@ namespace WebApi.DTOs
     {
         public string Id { get; set; } = Guid.NewGuid().ToString();
         public required string SystemId { get; set; }
-        public ICollection<PentestingMethodology> Methodologies { get; set; } = new List<PentestingMethodology>();
+        public ICollection<TestingMethodology> Methodologies { get; set; } = new List<TestingMethodology>();
         private DateTime CreationTime { get; set; } = DateTime.Now;
         public required string OwnerId { get; set; }
-        public ICollection<Pentester> Pentesters { get; set; } = new List<Pentester>();
+        public ICollection<ApplicationUser> Pentesters { get; set; } = new List<ApplicationUser>();
         // scope :
         // ip ranges , 
         // report / reports

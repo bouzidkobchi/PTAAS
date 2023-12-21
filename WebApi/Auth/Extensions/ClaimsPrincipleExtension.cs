@@ -5,7 +5,7 @@ using WebApi.Auth.Helpers;
 using WebApi.Data;
 using WebApi.Models;
 
-namespace WebApi.Auth
+namespace WebApi.Auth.Extenions
 {
     public static class ClaimsPrincipleExtension
     {
@@ -29,7 +29,25 @@ namespace WebApi.Auth
             return roles;
         }
 
+        public static UserInfo? GetUserInfo(this ClaimsPrincipal user)
+        {
+            if (!user.IsAuthenticated())
+            {
+                // User is not authenticated
+                return null;
+            }
 
+            var claimsIdentity = user.Identity as ClaimsIdentity;
+
+            if (claimsIdentity == null) { return null; }
+
+            return new UserInfo
+            {
+                Username = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier)?.Value,
+                Email = claimsIdentity.FindFirst(ClaimTypes.Email)?.Value,
+                Roles = claimsIdentity.FindAll(ClaimTypes.Role)?.Select(c => c.Value).ToArray()
+            };
+        }
 
     }
 }

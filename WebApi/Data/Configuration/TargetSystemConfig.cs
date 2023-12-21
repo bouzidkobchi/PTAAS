@@ -1,19 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WebApi.Models;
 
 namespace WebApi.Data.FluentApi
 {
-    public static class TargetSystemConfig
+    public class TargetSystemConfig : IEntityTypeConfiguration<TargetSystem>
     {
-        public static ModelBuilder AddTargetSystemEntity(this ModelBuilder modelBuilder)
+        public void Configure(EntityTypeBuilder<TargetSystem> builder)
         {
-            var targetSystemEntity =  modelBuilder.Entity<TargetSystem>();
-
-            targetSystemEntity.HasMany(ts => ts.Tests)
+            builder.HasMany(ts => ts.Tests)
                 .WithOne(t => t.System)
                 .OnDelete(DeleteBehavior.NoAction);
-
-            return modelBuilder;
         }
     }
 }

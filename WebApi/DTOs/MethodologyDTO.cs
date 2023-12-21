@@ -4,18 +4,18 @@ using WebApi.Models;
 
 namespace WebApi.DTOs
 {
-    public class PentestingMethodologyDTO
+    public class MethodologyDTO
     {
         public required string Name { get; set; }
-        public PentestingMethodologyDTO() { }
+        public MethodologyDTO() { }
         [System.Diagnostics.CodeAnalysis.SetsRequiredMembers]
-        public PentestingMethodologyDTO(PentestingMethodology method)
+        public MethodologyDTO(TestingMethodology method)
         {
             Name = method.Name;
         }
-        public PentestingMethodology ToPentestingMethodology()
+        public TestingMethodology ToPentestingMethodology()
         {
-            return new PentestingMethodology { Name = Name };
+            return new TestingMethodology { Name = Name };
         }
     }
 

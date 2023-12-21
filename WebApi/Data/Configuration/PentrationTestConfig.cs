@@ -1,27 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WebApi.Models;
 
 namespace WebApi.Data.FluentApi
 {
-    public static class PentrationTestConfig
+    public class PentrationTestConfig : IEntityTypeConfiguration<PentrationTest>
     {
-        public static ModelBuilder AddPentrationTestEntity(this ModelBuilder modelBuilder)
+        public void Configure(EntityTypeBuilder<PentrationTest> builder)
         {
-            var pentrationTestEntity = modelBuilder.Entity<PentrationTest>();
-
-            pentrationTestEntity.HasOne(t => t.System)
+            builder.HasOne(t => t.System)
                 .WithMany(s => s.Tests)
                 .HasForeignKey(t => t.SystemId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            pentrationTestEntity.HasOne(p => p.Owner)
+            builder.HasOne(p => p.Owner)
                 .WithMany(t => t.RequestedTests)
                 .HasForeignKey(t => t.OwnerId)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            pentrationTestEntity.HasIndex(t => t.Status);
-
-            return modelBuilder;
+            builder.HasIndex(t => t.Status);
         }
     }
 }

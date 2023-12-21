@@ -1,7 +1,7 @@
 ﻿using IdentityModel;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations.Schema;
-using WebApi.Auth.Helpers;
+using WebApi.Enums;
 
 namespace WebApi.Models
 {

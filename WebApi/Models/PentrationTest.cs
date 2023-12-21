@@ -11,15 +11,15 @@ namespace WebApi.Models
         public string Id { get; set; }
         public  TargetSystem System { get; set; }
         public required string SystemId { get; set; }
-        public ICollection<PentestingMethodology> Methodologies { get; set; } = new List<PentestingMethodology>();
+        public ICollection<TestingMethodology> Methodologies { get; set; } = new List<TestingMethodology>();
         public TestStatus Status { get; set; }
         public DateTime CreationTime { get; set; }
         public DateTime ScheduleTime { get; set; }
-        public  Client Owner { get; set; }
+        public  ApplicationUser Owner { get; set; }
         public required string OwnerId { get; set; }
-        public ICollection<Pentester> Pentesters { get; set; } = new List<Pentester>();
+        public ICollection<ApplicationUser> Pentesters { get; set; } = new List<ApplicationUser>();
         public ICollection<Finding> Findings { get; set; } = new List<Finding>();
-        // scope :
+        // scope :q
         // ip ranges ,
         // report file path
 

@@ -4,7 +4,7 @@ using WebApi.Repositories;
 
 namespace WebApi.Models
 {
-    public class PentestingMethodology : IHasId
+    public class TestingMethodology : IHasId
     {
         [NotMapped]
         public string Id => Name;

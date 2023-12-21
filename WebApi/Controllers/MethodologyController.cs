@@ -67,7 +67,7 @@ namespace WebApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Create([FromBody] PentestingMethodologyDTO pentestingMethodology)
+        public IActionResult Create([FromBody] MethodologyDTO pentestingMethodology)
         {
             if (pentestingMethodology == null)
             {

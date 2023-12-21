@@ -1,20 +1,17 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WebApi.Data.FluentApi;
 using WebApi.Models;
 
 namespace WebApi.Data
 {
     public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
-        public DbSet<Admin> Admins { get; set; }
-        public DbSet<Pentester> Pentesters { get; set; }
-        public DbSet<Client> Clients { get; set; }
+        public DbSet<ApplicationUser> Users { get; set; }
+        public DbSet<ApplicationRole> Roles { get; set; }
         public DbSet<PentrationTest> Tests { get; set; }
         public DbSet<Finding> Findings { get; set; }
-        public DbSet<PentestingMethodology> PentestingMethodologies { get; set; }
-        public DbSet<ApplicationRole> Roles { get; set; }
+        public DbSet<TestingMethodology> Methodologies { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var config = new ConfigurationBuilder()
@@ -26,7 +23,7 @@ namespace WebApi.Data
 
             if (connectionString is null)
             {
-                throw new Exception("connection string not found !");
+                throw new Exception("connection string not included in appsettings.json !");
             }
             optionsBuilder.UseSqlServer(connectionString);
         }
@@ -36,9 +33,6 @@ namespace WebApi.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<ApplicationUser>().ToTable("Users");
-            modelBuilder.Entity<Admin>().ToTable("Admins");
-            modelBuilder.Entity<Client>().ToTable("Clients");
-            modelBuilder.Entity<Pentester>().ToTable("Pentesters");
 
             modelBuilder.Entity<ApplicationRole>().ToTable("Roles");
             modelBuilder.Entity<IdentityRoleClaim<string>>().ToTable("RoleClaims");
@@ -47,13 +41,9 @@ namespace WebApi.Data
             modelBuilder.Entity<IdentityUserRole<string>>().ToTable("UserRoles");
             modelBuilder.Entity<IdentityUserToken<string>>().ToTable("UserTokens");
 
-            modelBuilder.AddAdminEntity();
-            modelBuilder.AddClientEntity();
-            modelBuilder.AddPentesterEntity();
-            modelBuilder.AddPentrationTestEntity();
-            modelBuilder.AddTargetSystemEntity();
-            modelBuilder.AddPentestingMethodologyEntity();
-            modelBuilder.AddFindingEntity();
+            // apply configuration
+            modelBuilder.ApplyConfigurationsFromAssembly(
+                typeof(AppDbContext).Assembly);
         }
 
         public ApplicationRole[] LoadRoles(string[] roles)

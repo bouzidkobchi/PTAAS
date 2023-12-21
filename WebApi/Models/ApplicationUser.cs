@@ -3,7 +3,15 @@ using WebApi.Repositories;
 
 namespace WebApi.Models
 {
-    abstract public class ApplicationUser : IdentityUser , IHasId
+    public class ApplicationUser : IdentityUser , IHasId
     {
+        // canDoATest
+        public ICollection<PentrationTest> TokenTests { get; set; } // make them as functions // TestsToDo
+
+        // canDemandATest
+        public string? Company { get; set; }
+        public ICollection<PentrationTest> RequestedTests { get; set; } = new List<PentrationTest>(); // TestsToAsk
+
+        // 
     }
 }
