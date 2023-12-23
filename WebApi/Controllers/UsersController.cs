@@ -50,11 +50,10 @@ namespace WebApi.Controllers
                 {
                     UserName = model.UserName,
                     Email = model.Email,
-                    // Add other properties as needed
                 };
 
                 // Save the user to the database
-                var result = await _userManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user,model.Password);
 
                 // Check if user creation was successful
                 if (result.Succeeded)
@@ -70,10 +69,10 @@ namespace WebApi.Controllers
                 return BadRequest(new
                 {
                     Message = "Failed to create user.",
-                    Errors = result.Errors
+                    result.Errors
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception or handle it appropriately
                 return StatusCode(500, new
@@ -122,7 +121,7 @@ namespace WebApi.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(object), 200)] // Swagger response type for successful retrieval
         [ProducesResponseType(typeof(object), 404)] // Swagger response type for not found
-        public IActionResult GetUser(string id)
+        public IActionResult GetUser([Required] string id)
         {
             var user = _dbContext.Users.Find(id);
 
@@ -144,17 +143,17 @@ namespace WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        /// /api/users/AddToRole?id=UserId&roleName=RoleName
+        /// /api/users/{UserId}/AddToRole?roleName=RoleName
         /// </remarks>
         /// <param name="id">The ID of the user.</param>
         /// <param name="roleName">The name of the role to add the user to.</param>
         /// <returns>Returns Ok if the user is successfully added to the role, NotFound if the user or role is not found, or BadRequest for invalid input.</returns>
-        [HttpPost("AddToRole")]
+        [HttpPost("{id}/AddToRole")]
         [ProducesResponseType(typeof(object), 200)] // Swagger response type for successful operation
         [ProducesResponseType(typeof(object), 400)] // Swagger response type for bad request
         [ProducesResponseType(typeof(object), 404)] // Swagger response type for not found
         [ProducesResponseType(typeof(object), 500)] // Swagger response type for server error
-        public async Task<IActionResult> AddToRoleAsync(string id, string roleName)
+        public async Task<IActionResult> AddToRoleAsync([Required] string id, [Required] string roleName)
         {
             try
             {
@@ -198,16 +197,16 @@ namespace WebApi.Controllers
                 return BadRequest(new
                 {
                     Message = "Failed to add user to role.",
-                    Errors = result.Errors
+                    result.Errors
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception or handle it appropriately
                 return StatusCode(500, new
                 {
                     Message = "Internal server error.",
-                    Error = ex.Message
+                    //Error = ex.Message
                 });
             }
         }
@@ -217,7 +216,7 @@ namespace WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        /// /api/users?id=UserId
+        /// /api/users/{UserId}
         /// {
         ///   "userName": "NewUserName",
         ///   "email": "new.email@example.com"
@@ -231,7 +230,7 @@ namespace WebApi.Controllers
         [ProducesResponseType(typeof(object), 400)] // Swagger response type for bad request
         [ProducesResponseType(typeof(object), 404)] // Swagger response type for not found
         [ProducesResponseType(typeof(object), 500)] // Swagger response type for server error
-        public async Task<IActionResult> UpdateUserInfo_WithoutThePasswordAsync([Required] UserModel model, [Required, FromRoute] string userId)
+        public async Task<IActionResult> UpdateUserInfoAsync([Required] UserModel model, [Required, FromRoute] string userId)
         {
             try
             {
@@ -267,10 +266,10 @@ namespace WebApi.Controllers
                 return BadRequest(new
                 {
                     Message = "Failed to update user information.",
-                    Errors = result.Errors
+                    result.Errors
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception or handle it appropriately
                 return StatusCode(500, new
@@ -286,17 +285,17 @@ namespace WebApi.Controllers
         /// </summary>
         /// <remarks>
         /// Sample request:
-        /// /api/users/RemoveFromRole?id=UserId&roleName=RoleName
+        /// /api/users/{UserId}/RemoveFromRole?roleName=RoleName
         /// </remarks>
         /// <param name="id">The ID of the user.</param>
         /// <param name="roleName">The name of the role to remove the user from.</param>
         /// <returns>Returns Ok if the user is successfully removed from the role, NotFound if the user or role is not found, or BadRequest for invalid input.</returns>
-        [HttpPost("RemoveFromRole")]
+        [HttpPost("{id}/RemoveFromRole")]
         [ProducesResponseType(typeof(object), 200)] // Swagger response type for successful operation
         [ProducesResponseType(typeof(object), 400)] // Swagger response type for bad request
         [ProducesResponseType(typeof(object), 404)] // Swagger response type for not found
         [ProducesResponseType(typeof(object), 500)] // Swagger response type for server error
-        public async Task<IActionResult> RemoveFromRoleAsync([FromQuery] string id, [FromQuery] string roleName)
+        public async Task<IActionResult> RemoveFromRoleAsync([Required , FromQuery] string id, [Required , FromQuery] string roleName)
         {
             try
             {
@@ -340,10 +339,10 @@ namespace WebApi.Controllers
                 return BadRequest(new
                 {
                     Message = "Failed to remove user from role.",
-                    Errors = result.Errors
+                    result.Errors
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Log the exception or handle it appropriately
                 return StatusCode(500, new

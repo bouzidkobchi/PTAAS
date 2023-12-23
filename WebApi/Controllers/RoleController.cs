@@ -52,7 +52,7 @@ namespace WebApi.Controllers
             return BadRequest(new
             {
                 Message = "Failed to create role.",
-                Errors = result.Errors,
+                result.Errors,
             });
         }
 
@@ -98,7 +98,7 @@ namespace WebApi.Controllers
             return BadRequest(new
             {
                 Message = $"Failed to delete role with ID = {id}.",
-                Errors = result.Errors
+                result.Errors
             });
         }
 
@@ -206,7 +206,7 @@ namespace WebApi.Controllers
             return BadRequest(new
             {
                 Message = $"Failed to update role with ID = {roleId}.",
-                Errors = result.Errors
+                result.Errors
             });
         }
 

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using WebApi.Auth;
+using WebApi.Auth.Models;
 
 namespace WebApi.Controllers
 {
@@ -8,12 +10,11 @@ namespace WebApi.Controllers
         Task<IActionResult> Register(RegisterModel model);
         Task<IActionResult> Login(LoginModel model);
         Task<IActionResult> Logout();
-        Task<IActionResult> RefreshToken();
-        Task<IActionResult> ForgotPassword();
-        Task<IActionResult> ResetPassword();
-        Task<IActionResult> ChangePassword();
-        IActionResult GetUserInfo();
-        Task<IActionResult> UpdateUserInfo();
+        Task<IActionResult> RefreshToken(string refreshToken);
+        Task<IActionResult> ForgotPassword(string email);
+        Task<IActionResult> ResetPassword([Required, FromBody] ResetPasswordModel model);
+        Task<IActionResult> ChangePassword(changePasswordModel model);
+        IActionResult GetMyInfo();
     }
 
     public interface IAdminController

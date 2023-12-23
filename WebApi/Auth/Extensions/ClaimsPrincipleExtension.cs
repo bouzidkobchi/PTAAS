@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NuGet.Protocol;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using WebApi.Auth.Helpers;
 using WebApi.Data;
 using WebApi.Models;
@@ -9,15 +7,6 @@ namespace WebApi.Auth.Extenions
 {
     public static class ClaimsPrincipleExtension
     {
-        //public static bool IsAuthenticated(this ClaimsPrincipal User)
-        //{
-        //    if (User is not null && User.Identity is not null && User.Identity.IsAuthenticated)
-        //    {
-        //        return true;
-        //    }
-        //    return false;
-        //}
-
         public static bool IsAuthenticated(this ClaimsPrincipal user)
         {
             return user?.Identity?.IsAuthenticated == true;
@@ -31,15 +20,11 @@ namespace WebApi.Auth.Extenions
 
         public static UserInfo? GetUserInfo(this ClaimsPrincipal user)
         {
-            if (!user.IsAuthenticated())
+            if (!user.IsAuthenticated() || user.Identity is not ClaimsIdentity claimsIdentity)
             {
                 // User is not authenticated
                 return null;
             }
-
-            var claimsIdentity = user.Identity as ClaimsIdentity;
-
-            if (claimsIdentity == null) { return null; }
 
             return new UserInfo
             {
@@ -47,6 +32,19 @@ namespace WebApi.Auth.Extenions
                 Email = claimsIdentity.FindFirst(ClaimTypes.Email)?.Value,
                 Roles = claimsIdentity.FindAll(ClaimTypes.Role)?.Select(c => c.Value).ToArray()
             };
+        }
+
+        public static ApplicationUser? LoadUser(this ClaimsPrincipal User , AppDbContext dbContext)
+        {
+            var uid = User.Claims.First(c => c.Type == "uid");
+            if (uid == null)
+            {
+                return null;
+            }
+
+            var user = dbContext.Users.Find(uid);
+
+            return user;
         }
 
     }

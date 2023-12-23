@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
+using System.Data;
 using WebApi.Data;
 using WebApi.DTOs;
 using WebApi.Repositories;
@@ -67,16 +69,12 @@ namespace WebApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult Create([FromBody] MethodologyDTO pentestingMethodology)
+        public IActionResult Create([Required , FromBody] MethodologyDTO pentestingMethodology)
         {
-            if (pentestingMethodology == null)
-            {
-                return BadRequest();
-            }
             var method = pentestingMethodology.ToPentestingMethodology();
-            var createdId = _PentestingMethodologyRepository.Create(method);
+            var methodId = _PentestingMethodologyRepository.Create(method);
 
-            return Created($"/methodologies/{createdId}", method);
+            return CreatedAtAction(nameof(Get), new { methodId }, method);
         }
 
 
@@ -96,14 +94,19 @@ namespace WebApi.Controllers
 
             if (PentestingMethodology == null)
             {
-                return NotFound();
+                return NotFound(new
+                {
+                    Message = $"There is no Methodology with ID = {id}."
+                });
             }
 
             _PentestingMethodologyRepository.Delete(PentestingMethodology);
 
-            return NoContent();
+            return Ok(new
+            {
+                Message = $"Methodology with ID = {id} was deleted successfully."
+            });
         }
-
 
         /// <summary>
         /// Retrieves the tests for a pentesting methodology.
@@ -117,19 +120,35 @@ namespace WebApi.Controllers
         [HttpGet("{id}/tests")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetTests(string id, int pageNumber , int pageSize)
+        public IActionResult GetTests(string id, int pageNumber, int pageSize)
         {
-            var tests = _PentestingMethodologyRepository.GetPage_Tests(id,pageNumber,pageSize);
-
-            if (tests == null)
+            try
             {
-                return NotFound();
+                // Retrieve tests for the specified pentesting methodology
+                var tests = _PentestingMethodologyRepository.GetPage_Tests(id, pageNumber, pageSize);
+
+                // Check if tests are found
+                if (tests == null)
+                {
+                    return NotFound(new
+                    {
+                        Message = $"There is no Methodology with ID = {id}."
+                    });
+                }
+
+                // Return the tests
+                return Ok(tests);
             }
-
-            return Ok(tests);
+            catch (Exception)
+            {
+                // Log the exception or handle it appropriately
+                return StatusCode(500, new
+                {
+                    Message = "Internal server error.",
+                    //Error = ex.Message
+                });
+            }
         }
-
-
     }
 
 }
