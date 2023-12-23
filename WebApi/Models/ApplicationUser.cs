@@ -13,5 +13,8 @@ namespace WebApi.Models
         public ICollection<PentrationTest> RequestedTests { get; set; } = new List<PentrationTest>(); // TestsToAsk
 
         // 
+
+        public override required string UserName { get => base.UserName; set => base.UserName = value; }
+        public override required string Email { get => base.Email; set => base.Email = value; }
     }
 }

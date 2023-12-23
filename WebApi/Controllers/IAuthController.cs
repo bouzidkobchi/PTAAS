@@ -12,34 +12,19 @@ namespace WebApi.Controllers
         Task<IActionResult> ForgotPassword();
         Task<IActionResult> ResetPassword();
         Task<IActionResult> ChangePassword();
-        Task<IActionResult> GetUserInfo();
+        IActionResult GetUserInfo();
         Task<IActionResult> UpdateUserInfo();
-
     }
 
-    public interface IRoleController
+    public interface IAdminController
     {
-        /*
-         * create , read , update [permmisions ..] , delete
-         * assign role / remove a role from user
-         * 
-         */
     }
 
-    public interface IUsersController
+    public interface IPentesterController
     {
-        /*
-         * crud
-         * add role
-         * 
-         */
     }
 
-    public interface ITestController
+    public interface IClientController
     {
-        /*
-         * assign it to a user [admin or some one else]
-         * demand one [client]
-         */
     }
 }

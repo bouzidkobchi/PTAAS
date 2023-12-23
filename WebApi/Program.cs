@@ -63,7 +63,7 @@ builder.Services.AddSwaggerGen(option =>
 });
 
 builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
-builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<RoleManager<ApplicationRole>>();
 
 // Adding application db context

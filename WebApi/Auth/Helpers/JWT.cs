@@ -2,9 +2,9 @@
 {
     public class JWT
     {
-        public string Key { get; set; }
+        public required string Key { get; set; }
         public string Issuer { get; set; }
         public string Audience { get; set; }
-        public required double DurationInDays { get; set; }
+        public required double DurationInMinutes { get; set; }
     }
 }
