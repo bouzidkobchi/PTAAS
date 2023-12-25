@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using WebApi.Auth.Models;
 using WebApi.Data;
@@ -45,7 +46,7 @@ namespace WebApi.Controllers
             if (result.Succeeded)
             {
                 // Return a 201 Created response with the created role
-                return CreatedAtAction(nameof(GetRoleById), new { roleId = role.Id }, role);
+                return CreatedAtAction(nameof(GetRoleById), new { id = role.Id }, role);
             }
 
             // Return a BadRequest response with the errors if role creation failed
@@ -138,11 +139,33 @@ namespace WebApi.Controllers
         public IActionResult GetRoles()
         {
             // Retrieve all roles from the database
-            var roles = _dbContext.Roles.ToArray();
+            var roles = _dbContext.Roles
+                    .AsNoTracking()
+                    .ToList();
 
             // Return the list of roles
             return Ok(roles);
         }
+
+        //public IActionResult GetRolesWithRoles()
+        //{
+        //    var usersWithRoles = _dbContext.Users
+        //.Join(
+        //    _dbContext.UserRoles,
+        //    user => user.Id,
+        //    userRole => userRole.UserId,
+        //    (user, userRole) => new
+        //    {
+        //        UserId = user.Id,
+        //        UserName = user.UserName,
+        //        Email = user.Email,
+        //        Role = userRole.Role.Name // Assuming there's a navigation property 'Role' in UserRoles
+        //    }
+        //)
+        //.ToList();
+
+        //    return Ok(usersWithRoles);
+        //}
 
         /// <summary>
         /// Gets all available permissions.

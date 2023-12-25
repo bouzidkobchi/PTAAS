@@ -5,6 +5,8 @@ namespace WebApi.Models
 {
     public class ApplicationUser : IdentityUser , IHasId
     {
+        public List<ApplicationRole> Roles { get; set; }
+
         // canDoATest
         public ICollection<PentrationTest> TokenTests { get; set; } // make them as functions // TestsToDo
 

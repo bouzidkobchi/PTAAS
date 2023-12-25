@@ -103,11 +103,102 @@ namespace WebApi.Controllers
                 });
             }
 
-            // Retrieve a page of users, don't forget to include roles
+            //Retrieve a page of users, don't forget to include roles
             var users = _dbContext.Users
                 .AsNoTracking()
                 .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize);
+                .Take(pageSize)
+                .ToList();
+
+
+            //var usersWithRoles = _dbContext.Users
+            //    .GroupJoin(
+            //        _dbContext.UserRoles,
+            //        user => user.Id,
+            //        userRole => userRole.UserId,
+            //        (user, userRoles) => new
+            //        {
+            //            user.Id,
+            //            user.UserName,
+            //            user.Email,
+            //            Roles = userRoles.Select(ur => ur.RoleId).ToList()
+            //        }
+            //    )
+            //    .SelectMany(
+            //        userWithRoles => userWithRoles.Roles.DefaultIfEmpty(), // Left join with UserRoles
+            //        (userWithRoles, roleId) => new
+            //        {
+            //            userWithRoles.Id,
+            //            userWithRoles.UserName,
+            //            userWithRoles.Email,
+            //            RoleId = roleId
+            //        }
+            //    )
+            //    .Join(
+            //        _dbContext.Roles,
+            //        userWithRole => userWithRole.RoleId,
+            //        role => role.Id,
+            //        (userWithRole, role) => new
+            //        {
+            //            userWithRole.Id,
+            //            userWithRole.UserName,
+            //            userWithRole.Email,
+            //            userWithRole.RoleId,
+            //            RoleName = role.Name // Include the role name
+            //        }
+            //    )
+            //    .ToList();
+
+            //var usersWithRolesIds = from user in _dbContext.Users
+            //                     join userRole in _dbContext.UserRoles
+            //                     on user.Id equals userRole.UserId
+            //                     select new
+            //                     {
+            //                         user.Id,
+            //                         user.UserName,
+            //                         user.Email,
+            //                         roleId = userRole.RoleId
+            //                     };
+
+            //var usersWithRoles = from user in usersWithRolesIds
+            //                     join role in _dbContext.Roles
+            //                     on user.roleId equals role.Id
+            //                     group new
+            //                     {
+            //                         user.UserName,
+            //                         user.Email,
+            //                         user.Id,
+            //                         role.Name
+            //                     }
+            //                     by user.Id;
+
+            //var usersWithRoles = (from user in _dbContext.Users
+            //                      join userRole in _dbContext.UserRoles
+            //                      on user.Id equals userRole.UserId into userRolesGroup
+            //                      from ur in userRolesGroup.DefaultIfEmpty()
+            //                      select new
+            //                      {
+            //                          user.Id,
+            //                          user.UserName,
+            //                          user.Email,
+            //                          RoleId = ur != null ? ur.RoleId : null
+            //                      })
+            //         .GroupBy(
+            //             userWithRole => userWithRole.Id,
+            //             (key, userRoles) => new
+            //             {
+            //                 Id = key,
+            //                 userRoles.First().UserName,
+            //                 userRoles.First().Email,
+            //                 Roles = userRoles
+            //                     .Where(ur => ur.RoleId != null)
+            //                     .Select(ur => new ApplicationRole
+            //                     {
+            //                         Id = ur.RoleId,
+            //                     })
+            //                     .ToList()
+            //             })
+            //         .ToList();
 
             // Return the page of users
             return Ok(users);

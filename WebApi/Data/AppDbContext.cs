@@ -7,8 +7,6 @@ namespace WebApi.Data
 {
     public class AppDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
     {
-        public DbSet<ApplicationUser> Users { get; set; }
-        public DbSet<ApplicationRole> Roles { get; set; }
         public DbSet<PentrationTest> Tests { get; set; }
         public DbSet<Finding> Findings { get; set; }
         public DbSet<TestingMethodology> Methodologies { get; set; }

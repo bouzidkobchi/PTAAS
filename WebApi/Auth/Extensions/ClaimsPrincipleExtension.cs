@@ -36,7 +36,7 @@ namespace WebApi.Auth.Extenions
 
         public static ApplicationUser? LoadUser(this ClaimsPrincipal User , AppDbContext dbContext)
         {
-            var uid = User.Claims.First(c => c.Type == "uid");
+            var uid = User.Claims.First(c => c.Type == "uid").Value;
             if (uid == null)
             {
                 return null;

@@ -1,0 +1,156 @@
+✅ post /api/auth/register :
+    - valid data : accepted
+    - duplication : accepted
+    - invalid data or missed field : accepted
+
+✅ post /api/auth/login
+    - valid data : accepted
+    - invalid data : accepted
+
+🔐 login required
+✅ post /api/auth/logout
+    - work but :
+        - check the logout concept in SPAs
+        ❌- make the 401 documentation
+
+❌ post /api/auth/forgot-password
+    - theoricly works , need for sending emails and validate the sent url
+
+❌ post /api/auth/reset-password // add option can user reset password manually by asking the admin
+    - check the reset password model , maybe i didn't need the the token , just add it a a secure http cookie
+
+🔐 login required
+✅ post /api/auth/my-info
+    - valid data : accepted
+    - invalid data : accepted
+    ❌- make the 401 documentation
+    ❌- it return the info from jwt token , maybe i need to load the user info from the database
+
+🔐 login required
+✅ post /api/auth/change-password
+    - valid data : accepted
+    - invalid data : accepted
+
+🔐 login required
+✅ get /api/auth/refresh-token
+    - valid data : accepted
+    - invalid data : accepted
+    ❌- maybe is not good to resend the refresh token
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+get /api/methodologies
+    - 
+
+🔐 authorized
+post /api/methodologies
+
+🔐 authorized
+get /api/methodologies/{id}
+
+🔐 authorized
+delete /api/methodologies/{id}
+
+🔐 authorized
+get /api/methodologies/{id}/tests
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+get /api/tests
+
+🔐 authorized
+post /api/tests
+
+🔐 authorized
+get /api/tests/{id}
+
+🔐 authorized
+put /api/tests/{id}
+
+🔐 authorized
+delete /api/tests/{id}
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+get /api/tests/{id}/findings
+
+🔐 authorized
+post /api/tests/{id}/findings
+
+🔐 authorized
+delete /api/tests/findings/{id} // i should apply get here too
+
+🔐 authorized
+get /api/tests/on-hold      // i should create endpoint to cancel a test / finish it
+
+🔐 authorized
+get /api/tests/cancelled
+
+🔐 authorized
+get /api/tests/scheduled
+
+🔐 authorized
+get /api/tests/completed
+
+🔐 authorized
+get /api/tests/in-progress
+
+🔐 authorized
+put /api/tests/change-status
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+post /api/roles/CreateRole // it should be post /roles only
+
+🔐 authorized
+get /api/roles/{id} 
+
+🔐 authorized
+put /api/roles/{roleId}     // maybe by name too
+
+🔐 authorized
+delete /api/roles/{id} 
+
+🔐 authorized
+get /api/roles
+
+🔐 authorized
+get /api/roles/permissions // maybe it can be /permissions more better
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+get /api/systems
+
+🔐 authorized
+post /api/systems
+
+🔐 authorized
+get /api/systems/{id}/tests
+
+🔐 authorized
+delete /api/systems/{id}
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+get /api/users
+
+🔐 authorized
+post /api/users
+
+🔐 authorized
+get /api/users/{id}
+
+🔐 authorized
+put /api/users/{id}
+
+🔐 authorized
+post /api/users/{id}/AddToRole // should be post /api/users/{id}/add-to-role
+
+🔐 authorized
+post /api/users/{id}/RemoveFromRole // this too

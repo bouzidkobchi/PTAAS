@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using WebApi.Data;
 using WebApi.DTOs;
 using WebApi.Repositories;
@@ -9,16 +10,16 @@ namespace WebApi.Controllers
     [ApiController]
     public class TargetSystemController : ControllerBase
     {
-        private readonly TargetSystemRepository targetSystemRepository;
-        public TargetSystemController(AppDbContext context)
+        private readonly TargetSystemRepository _targetSystemRepository;
+        public TargetSystemController(AppDbContext context, TargetSystemRepository targetSystemRepository)
         {
-            targetSystemRepository = new TargetSystemRepository(context);
+            _targetSystemRepository = targetSystemRepository;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(targetSystemRepository.GetAll());
+            return Ok(_targetSystemRepository.GetAll());
         }
 
         [HttpPost]
@@ -29,16 +30,35 @@ namespace WebApi.Controllers
                 return BadRequest();
             }
 
-            var systemId = targetSystemRepository.Create(system.ToTargetSystem());
+            var systemId = _targetSystemRepository.Create(system.ToTargetSystem());
 
             return Created($"/systems/{systemId}", system);
         }
 
         [HttpGet("{id}/tests")]
-        public IActionResult GetTest(string id) { throw  new NotImplementedException(); }
+        public IActionResult GetTest([Required] string id, int pageNumber , int pageSize)
+        {
+            var system = _targetSystemRepository.Get(id);
+
+            if(system == null)
+            {
+                return NotFound(new
+                {
+                    Message = $"there is no system with ID = {id}"
+                });
+            }
+
+            var tests = system.Tests.ToList();
+
+            return Ok(tests);
+        }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(string id) {  throw new NotImplementedException(); }
+        public IActionResult Delete(string id)
+        {
+            // don't delet tests
+            throw new NotImplementedException();
+        }
 
     }
 }

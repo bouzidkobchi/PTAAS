@@ -1,23 +1,20 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using NuGet.Protocol;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using WebApi.Auth;
 using WebApi.Auth.Extenions;
-using WebApi.Auth.Helpers;
 using WebApi.Auth.Models;
 using WebApi.Auth.Services;
 using WebApi.Data;
-using WebApi.Enums;
 using WebApi.Models;
 
 /*
  * POST /api/register       done
  * POST /api/login          done
  * POST /api/logout         done
- * POST /api/refresh-token  
+ * POST /api/refresh-token  done
  * POST /api/forgot-password    done
  * POST /api/reset-password     done
  * POST /api/change-password    done
@@ -46,7 +43,7 @@ namespace WebApi.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly AppDbContext _dbContext;
         private readonly JwtService _jwtService;
-        private readonly object _emailService;
+        //private readonly IEmailSender<ApplicationUser> _emailService;
         private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler;
         private static string[] _defaultRoles = new[] {"Client"};
 
@@ -54,14 +51,14 @@ namespace WebApi.Controllers
                               JwtService authService,
                               SignInManager<ApplicationUser> signInManager,
                               AppDbContext dbContext,
-                              object emailService,
+                              /*IEmailSender<ApplicationUser> emailService,*/
                               JwtSecurityTokenHandler jwtSecurityTokenHandler)
         {
             _userManager = userManager;
             _jwtService = authService;
             _signInManager = signInManager;
             _dbContext = dbContext;
-            _emailService = emailService;
+            //_emailService = emailService;
             _jwtSecurityTokenHandler = jwtSecurityTokenHandler;
         }
 
@@ -115,20 +112,10 @@ namespace WebApi.Controllers
                 await _userManager.AddToRoleAsync(user, role);
             }
 
-            //// Create a JWT token for the registered user
-            //var jwtSecurityToken = await _jwtService.CreateToken(user);
-
-            //// Return information about the registered user and the JWT token
-            //return Ok(new
-            //{
-            //    user.Email,
-            //    ExpiresOn = jwtSecurityToken.ValidTo,
-            //    Roles = _defaultRoles,
-            //    Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
-            //    Username = user.UserName,
-            //});
-
-            throw new NotImplementedException();
+            return Ok(new
+            {
+                Message = "User Created Seccessfuly."
+            });
         }
 
         /// <summary>
@@ -318,7 +305,7 @@ namespace WebApi.Controllers
         /// </remarks>
         /// <returns>Returns Ok with information about the authenticated user.</returns>
         [Authorize]
-        [HttpPost("my-info")]
+        [HttpGet("my-info")]
         [ProducesResponseType(typeof(object), 200)] // Swagger response type for successful retrieval
         [ProducesResponseType(typeof(object), 401)] // Swagger response type for unauthorized
         [ProducesResponseType(typeof(object), 500)] // Swagger response type for server error
@@ -404,45 +391,75 @@ namespace WebApi.Controllers
                 {
                     Message = "Internal server error.",
                     //Error = ex.Message
-                });
+                }) ;
             }
         }
 
+
+        /// <summary>
+        /// Endpoint to refresh an access token using a valid refresh token.
+        /// </summary>
+        /// <param name="refreshToken">The refresh token used for obtaining a new access token.</param>
+        /// <returns>
+        /// Returns a new access token along with relevant user information if the refresh token is valid.
+        /// Otherwise, returns a Bad Request with an error message.
+        /// </returns>
         [HttpGet("refresh-token")]
-        public async Task<IActionResult> RefreshToken(string refreshToken) // wait for testing , and adding the refresh token to the database
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
+        public async Task<IActionResult> RefreshToken(string refreshToken)
         {
-            var userClaimsPrincipal = _jwtService.GetPrincipalFromExpiredToken(refreshToken,out var jwtSecurityToken);
-
-            if(userClaimsPrincipal == null || jwtSecurityToken == null)
+            try
             {
-                return BadRequest(new
+                // Read and validate the refresh token
+                var userClaimsPrincipal = _jwtService.ReadToken(refreshToken, out var jwtSecurityToken);
+
+                // Check if the refresh token is invalid
+                if (userClaimsPrincipal == null || jwtSecurityToken == null)
                 {
-                    Message = "invalide refresh torkn."
+                    return BadRequest(new
+                    {
+                        Message = "Invalid refresh token."
+                    });
+                }
+
+                // Load user from the database using the refresh token
+                var user = userClaimsPrincipal.LoadUser(_dbContext);
+
+                // Check if the user is not found
+                if (user == null)
+                {
+                    return BadRequest(new
+                    {
+                        Message = "Invalid refresh token."
+                    });
+                }
+
+                // Create a new access token
+                var jwtAccessToken = await _jwtService.CreateAccessToken(user);
+
+                // Return successful response with user information and tokens
+                return Ok(new
+                {
+                    user.Email,
+                    AccessTokenExpiresOn = jwtAccessToken.ValidTo,
+                    RefreshTokenExpiresOn = jwtSecurityToken.ValidTo,
+                    Roles = userClaimsPrincipal.GetRoles(),
+                    AccessToken = _jwtSecurityTokenHandler.WriteToken(jwtAccessToken),
+                    RefreshToken = refreshToken,
+                    Username = user.UserName,
                 });
             }
-
-            var user = userClaimsPrincipal.LoadUser(_dbContext);
-
-            if(user == null)
+            catch (Exception)
             {
+                // Log the exception for further investigation
+
+                // Return a generic error response
                 return BadRequest(new
                 {
-                    Message = "invalide refresh torkn."
+                    Message = "An error occurred while refreshing the token. Please try again later."
                 });
             }
-
-            var jwtAccessToken = await _jwtService.CreateAccessToken(user);
-
-            return Ok(new
-            {
-                user.Email,
-                AccessTokenExpiresOn = jwtAccessToken.ValidTo,
-                RefreshTokenExpiresOn = jwtSecurityToken.ValidTo,
-                Roles = userClaimsPrincipal.GetRoles(),
-                AccessToken = _jwtSecurityTokenHandler.WriteToken(jwtAccessToken),
-                RefreshToken = refreshToken,
-                Username = user.UserName,
-            });
         }
     }
 }

@@ -1,3 +1,5 @@
+#define testing
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +24,10 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<PentestingMethodologyRepository>();
 builder.Services.AddScoped<FindingRepository>();
 builder.Services.AddSingleton<JwtSecurityTokenHandler>();
+
+builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
+builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<RoleManager<ApplicationRole>>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
@@ -65,13 +71,10 @@ builder.Services.AddSwaggerGen(option =>
 
 });
 
-builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
-builder.Services.AddScoped<JwtService>();
-builder.Services.AddScoped<RoleManager<ApplicationRole>>();
-
 // Adding application db context
 builder.Services.AddDbContext<AppDbContext>();
 
+#if testing
 // Adding identity
 builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(Options =>
 {
@@ -82,6 +85,9 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(Options =>
 })
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+#else
+throw new Exception("modify the program.cs default configuration");
+#endif
 
 // Adding authentication
 builder.Services.AddAuthentication(options =>

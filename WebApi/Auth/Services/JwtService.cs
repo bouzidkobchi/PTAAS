@@ -15,7 +15,6 @@ namespace WebApi.Auth.Services
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler;
-        private readonly IConfiguration _configuration;
         private readonly JWT _jwt;
 
         public JwtService(UserManager<ApplicationUser> userManager,
@@ -78,6 +77,8 @@ namespace WebApi.Auth.Services
             };
 
             var jwtRefreshToken = new JwtSecurityToken(
+                issuer: _jwt.Issuer,
+                audience: _jwt.Audience,
                 claims: claims,
                 signingCredentials: signingCredentials,
                 expires: DateTime.Now.AddDays(_jwt.RefreshTokenDuration));
@@ -114,21 +115,32 @@ namespace WebApi.Auth.Services
         //        ExpiresOn = DateTime.UtcNow.AddMinutes(Convert.ToDouble(_jwt.AccessTokenDuration))
         //    };
         //}
-        public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token,out JwtSecurityToken? refreshTokenObject)
+
+        public ClaimsPrincipal? ReadToken(string token, out JwtSecurityToken? refreshTokenObject)
         {
-            var tokenValidationParameters = JwtTokenValidationParametersFactory.Create(_jwt);
-
-            var principal = _jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
-
-            if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+            try
             {
+                var tokenValidationParameters = JwtTokenValidationParametersFactory.Create(_jwt);
+
+                var User = _jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+
+                if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    refreshTokenObject = null;
+                    return null;
+                }
+
+                refreshTokenObject = (JwtSecurityToken)securityToken;
+                return User;
+            }
+            catch (Exception)
+            {
+                // Handle other exceptions if necessary
                 refreshTokenObject = null;
                 return null;
             }
-
-            refreshTokenObject = (JwtSecurityToken) securityToken;
-            return principal;
         }
+
     }
 
     //public class TokenResponse

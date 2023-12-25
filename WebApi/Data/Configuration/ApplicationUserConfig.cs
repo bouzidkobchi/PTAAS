@@ -15,6 +15,10 @@ namespace WebApi.Data.FluentApi
 
             builder.HasMany(u => u.RequestedTests)
                 .WithOne(t => t.Owner);
+
+            //builder.HasMany(u => u.Roles)
+            //    .WithMany(r => r.Users)
+            //    .UsingEntity<ApplicationUserRoles>();
         }
     }
 }
