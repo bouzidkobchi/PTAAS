@@ -27,13 +27,39 @@ namespace WebApi.Controllers
         /// <response code="200">Returns the list of methodologies for the specified page.</response>
         /// <response code="400">Returns if the pageNumber or pageSize is less than 1.</response>
         [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(object))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(object))]
         public IActionResult GetPage(int pageNumber = 1, int pageSize = 10)
         {
-            var methodologies = _PentestingMethodologyRepository.GetPage(pageNumber, pageSize);
-            return Ok(methodologies);
+            try
+            {
+                // Validate input parameters
+                if (pageNumber < 1 || pageSize < 1)
+                {
+                    return BadRequest(new
+                    {
+                        Message = "Invalid page number or page size. Both should be greater than or equal to 1."
+                    });
+                }
+
+                // Retrieve methodologies for the specified page
+                var methodologies = _PentestingMethodologyRepository.GetPage(pageNumber, pageSize);
+
+                // Return the list of methodologies for the specified page
+                return Ok(methodologies);
+            }
+            catch (Exception)
+            {
+                // Log the exception for further investigation
+
+                // Return a generic error response for unexpected errors
+                return StatusCode(500, new
+                {
+                    Message = "An unexpected error occurred while retrieving pentesting methodologies. Please try again later."
+                });
+            }
         }
+
 
 
         /// <summary>
@@ -74,7 +100,7 @@ namespace WebApi.Controllers
             var method = pentestingMethodology.ToPentestingMethodology();
             var methodId = _PentestingMethodologyRepository.Create(method);
 
-            return CreatedAtAction(nameof(Get), new { methodId }, method);
+            return CreatedAtAction(nameof(Get), new { id = methodId }, pentestingMethodology);
         }
 
 

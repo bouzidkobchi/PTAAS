@@ -293,9 +293,6 @@ namespace WebApi.Controllers
             }
         }
 
-        //// Generate a reset password token
-        //var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
-
         // <summary>
         /// Retrieves information about the authenticated user.
         /// </summary>

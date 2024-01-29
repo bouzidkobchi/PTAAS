@@ -17,7 +17,7 @@
     - theoricly works , need for sending emails and validate the sent url
 
 ❌ post /api/auth/reset-password // add option can user reset password manually by asking the admin
-    - check the reset password model , maybe i didn't need the the token , just add it a a secure http cookie
+    - check the reset password model , maybe i didn't need the the token , just add it a secure http cookie
 
 🔐 login required
 ✅ post /api/auth/my-info
