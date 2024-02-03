@@ -2,13 +2,9 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
-using System.Text;
 using WebApi.Auth.Config;
 using WebApi.Auth.Helpers;
 using WebApi.Auth.Services;
@@ -28,6 +24,7 @@ builder.Services.AddSingleton<JwtSecurityTokenHandler>();
 builder.Services.Configure<JWT>(builder.Configuration.GetSection("JWT"));
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<RoleManager<ApplicationRole>>();
+builder.Services.AddScoped<IEmailSender<ApplicationUser>, EmailSenderService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>

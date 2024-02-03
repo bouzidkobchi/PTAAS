@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using WebApi.Auth;
 using WebApi.Auth.Extenions;
+using WebApi.Auth.Extensions;
 using WebApi.Auth.Models;
 using WebApi.Auth.Services;
 using WebApi.Data;
@@ -51,7 +52,7 @@ namespace WebApi.Controllers
                               JwtService authService,
                               SignInManager<ApplicationUser> signInManager,
                               AppDbContext dbContext,
-                              /*IEmailSender<ApplicationUser> emailService,*/
+                              //IEmailSender<ApplicationUser> emailService,
                               JwtSecurityTokenHandler jwtSecurityTokenHandler)
         {
             _userManager = userManager;
@@ -61,6 +62,17 @@ namespace WebApi.Controllers
             //_emailService = emailService;
             _jwtSecurityTokenHandler = jwtSecurityTokenHandler;
         }
+
+        //[HttpGet("send-email")]
+        //public async Task<IActionResult> sendEmail(string email, string subject , string message, int port, string domain)
+        //{
+        //    await new EmailSender().SendMessage(email, subject, message,port,domain);
+
+        //    return Ok(new
+        //    {
+        //        message = "email sent sucessfuly !"
+        //    });
+        //}
 
         /// <summary>
         /// Registers a new user.
@@ -155,7 +167,6 @@ namespace WebApi.Controllers
                 RefreshTokenExpiresOn = jwtRefreshToken.ValidTo,
                 Roles = rolesList,
                 AccessToken = _jwtSecurityTokenHandler.WriteToken(jwtAccessToken),
-                RefreshToken = _jwtSecurityTokenHandler.WriteToken(jwtRefreshToken),
                 Username = user.UserName,
             });
         }

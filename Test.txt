@@ -35,36 +35,38 @@
 ✅ get /api/auth/refresh-token
     - valid data : accepted
     - invalid data : accepted
-    ❌- maybe is not good to resend the refresh token
+    ✅ done- maybe is not good to resend the refresh token
 
 / ------------------------------------------------------------------------------------- /
 
 🔐 authorized
-get /api/methodologies
-    - 
+get /api/methodologies?tests-count=1
+    ❌- supposed to return all methodologies and tests (almost done , i add tests)
 
 🔐 authorized
-post /api/methodologies
+✅ post /api/methodologies
 
 🔐 authorized
 get /api/methodologies/{id}
+    - get all methodologies with their tests
 
 🔐 authorized
 delete /api/methodologies/{id}
 
 🔐 authorized
-get /api/methodologies/{id}/tests
+✅ get /api/methodologies/{id}/tests?pagination
 
 / ------------------------------------------------------------------------------------- /
 
 🔐 authorized
-get /api/tests
+get /api/tests?pagination
 
 🔐 authorized
 post /api/tests
 
 🔐 authorized
 get /api/tests/{id}
+    ❌ - allow only pentesters that can access to it
 
 🔐 authorized
 put /api/tests/{id}
@@ -75,7 +77,7 @@ delete /api/tests/{id}
 / ------------------------------------------------------------------------------------- /
 
 🔐 authorized
-get /api/tests/{id}/findings
+get /api/tests/{id}/findings?pagination
 
 🔐 authorized
 post /api/tests/{id}/findings
@@ -87,27 +89,28 @@ delete /api/tests/findings/{id} // i should apply get here too
 get /api/tests/on-hold      // i should create endpoint to cancel a test / finish it
 
 🔐 authorized
-get /api/tests/cancelled
+get /api/tests/cancelled ❌pagination
 
 🔐 authorized
-get /api/tests/scheduled
+get /api/tests/scheduled ❌pagination
 
 🔐 authorized
-get /api/tests/completed
+get /api/tests/completed ❌pagination
 
 🔐 authorized
-get /api/tests/in-progress
+get /api/tests/in-progress ❌pagination
 
 🔐 authorized
-put /api/tests/change-status
+put /api/tests/change-status ❌pagination
 
 / ------------------------------------------------------------------------------------- /
 
 🔐 authorized
-post /api/roles/CreateRole // it should be post /roles only
+post /api/roles/CreateRole ✅ // it should be post /roles only
 
 🔐 authorized
-get /api/roles/{id} 
+get /api/roles/{id}
+    - it should return also the permissions
 
 🔐 authorized
 put /api/roles/{roleId}     // maybe by name too
@@ -125,12 +128,14 @@ get /api/roles/permissions // maybe it can be /permissions more better
 
 🔐 authorized
 get /api/systems
+    ❌ - allow only pentesters that can access to it
 
 🔐 authorized
 post /api/systems
 
 🔐 authorized
 get /api/systems/{id}/tests
+    ❌ - allow only pentesters that can access to it 
 
 🔐 authorized
 delete /api/systems/{id}
@@ -139,6 +144,8 @@ delete /api/systems/{id}
 
 🔐 authorized
 get /api/users
+    ❌ - allow only pentesters that can access to the user tests
+    ❌ - write the correct query 
 
 🔐 authorized
 post /api/users
@@ -154,3 +161,9 @@ post /api/users/{id}/AddToRole // should be post /api/users/{id}/add-to-role
 
 🔐 authorized
 post /api/users/{id}/RemoveFromRole // this too
+
+/ ------------------------------------------------------------------------------------- /
+
+i should add how can users the the tests , for example when you go to /methodologies :
+    - if you are admin you can see all of them including tests
+    - if you are pentester you can see only the tests that you allowed to see

@@ -239,7 +239,7 @@ namespace WebApi.Controllers
         /// <param name="id">The ID of the user.</param>
         /// <param name="roleName">The name of the role to add the user to.</param>
         /// <returns>Returns Ok if the user is successfully added to the role, NotFound if the user or role is not found, or BadRequest for invalid input.</returns>
-        [HttpPost("{id}/AddToRole")]
+        [HttpPost("{id}/add-to-role")]
         [ProducesResponseType(typeof(object), 200)] // Swagger response type for successful operation
         [ProducesResponseType(typeof(object), 400)] // Swagger response type for bad request
         [ProducesResponseType(typeof(object), 404)] // Swagger response type for not found
@@ -381,7 +381,7 @@ namespace WebApi.Controllers
         /// <param name="id">The ID of the user.</param>
         /// <param name="roleName">The name of the role to remove the user from.</param>
         /// <returns>Returns Ok if the user is successfully removed from the role, NotFound if the user or role is not found, or BadRequest for invalid input.</returns>
-        [HttpPost("{id}/RemoveFromRole")]
+        [HttpPost("{id}/remove-from-role")]
         [ProducesResponseType(typeof(object), 200)] // Swagger response type for successful operation
         [ProducesResponseType(typeof(object), 400)] // Swagger response type for bad request
         [ProducesResponseType(typeof(object), 404)] // Swagger response type for not found

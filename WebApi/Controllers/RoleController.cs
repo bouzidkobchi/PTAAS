@@ -27,7 +27,7 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="model">The role model.</param>
         /// <returns>Returns the created role if successful, or BadRequest with errors if unsuccessful.</returns>
-        [HttpPost("CreateRole")]
+        [HttpPost]
         [ProducesResponseType(typeof(ApplicationRole), 201)] // Swagger response type for successful creation
         [ProducesResponseType(typeof(object), 400)] // Swagger response type for bad request
         public async Task<IActionResult> CreateRole([Required] RoleModel model)
