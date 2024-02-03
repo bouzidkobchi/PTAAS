@@ -1,0 +1,169 @@
+✅ post /api/auth/register :
+    - valid data : accepted
+    - duplication : accepted
+    - invalid data or missed field : accepted
+
+✅ post /api/auth/login
+    - valid data : accepted
+    - invalid data : accepted
+
+🔐 login required
+✅ post /api/auth/logout
+    - work but :
+        - check the logout concept in SPAs
+        ❌- make the 401 documentation
+
+❌ post /api/auth/forgot-password
+    - theoricly works , need for sending emails and validate the sent url
+
+❌ post /api/auth/reset-password // add option can user reset password manually by asking the admin
+    - check the reset password model , maybe i didn't need the the token , just add it a secure http cookie
+
+🔐 login required
+✅ post /api/auth/my-info
+    - valid data : accepted
+    - invalid data : accepted
+    ❌- make the 401 documentation
+    ❌- it return the info from jwt token , maybe i need to load the user info from the database
+
+🔐 login required
+✅ post /api/auth/change-password
+    - valid data : accepted
+    - invalid data : accepted
+
+🔐 login required
+✅ get /api/auth/refresh-token
+    - valid data : accepted
+    - invalid data : accepted
+    ✅ done- maybe is not good to resend the refresh token
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+get /api/methodologies?tests-count=1
+    ❌- supposed to return all methodologies and tests (almost done , i add tests)
+
+🔐 authorized
+✅ post /api/methodologies
+
+🔐 authorized
+get /api/methodologies/{id}
+    - get all methodologies with their tests
+
+🔐 authorized
+delete /api/methodologies/{id}
+
+🔐 authorized
+✅ get /api/methodologies/{id}/tests?pagination
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+get /api/tests?pagination
+
+🔐 authorized
+post /api/tests
+
+🔐 authorized
+get /api/tests/{id}
+    ❌ - allow only pentesters that can access to it
+
+🔐 authorized
+put /api/tests/{id}
+
+🔐 authorized
+delete /api/tests/{id}
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+get /api/tests/{id}/findings?pagination
+
+🔐 authorized
+post /api/tests/{id}/findings
+
+🔐 authorized
+delete /api/tests/findings/{id} // i should apply get here too
+
+🔐 authorized
+get /api/tests/on-hold      // i should create endpoint to cancel a test / finish it
+
+🔐 authorized
+get /api/tests/cancelled ❌pagination
+
+🔐 authorized
+get /api/tests/scheduled ❌pagination
+
+🔐 authorized
+get /api/tests/completed ❌pagination
+
+🔐 authorized
+get /api/tests/in-progress ❌pagination
+
+🔐 authorized
+put /api/tests/change-status ❌pagination
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+post /api/roles/CreateRole ✅ // it should be post /roles only
+
+🔐 authorized
+get /api/roles/{id}
+    - it should return also the permissions
+
+🔐 authorized
+put /api/roles/{roleId}     // maybe by name too
+
+🔐 authorized
+delete /api/roles/{id} 
+
+🔐 authorized
+get /api/roles
+
+🔐 authorized
+get /api/roles/permissions // maybe it can be /permissions more better
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+get /api/systems
+    ❌ - allow only pentesters that can access to it
+
+🔐 authorized
+post /api/systems
+
+🔐 authorized
+get /api/systems/{id}/tests
+    ❌ - allow only pentesters that can access to it 
+
+🔐 authorized
+delete /api/systems/{id}
+
+/ ------------------------------------------------------------------------------------- /
+
+🔐 authorized
+get /api/users
+    ❌ - allow only pentesters that can access to the user tests
+    ❌ - write the correct query 
+
+🔐 authorized
+post /api/users
+
+🔐 authorized
+get /api/users/{id}
+
+🔐 authorized
+put /api/users/{id}
+
+🔐 authorized
+post /api/users/{id}/AddToRole // should be post /api/users/{id}/add-to-role
+
+🔐 authorized
+post /api/users/{id}/RemoveFromRole // this too
+
+/ ------------------------------------------------------------------------------------- /
+
+i should add how can users the the tests , for example when you go to /methodologies :
+    - if you are admin you can see all of them including tests
+    - if you are pentester you can see only the tests that you allowed to see
