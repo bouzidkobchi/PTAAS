@@ -5,7 +5,6 @@ using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using WebApi.Auth;
 using WebApi.Auth.Extenions;
-using WebApi.Auth.Extensions;
 using WebApi.Auth.Models;
 using WebApi.Auth.Services;
 using WebApi.Data;

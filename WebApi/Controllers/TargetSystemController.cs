@@ -6,6 +6,7 @@ using WebApi.Repositories;
 
 namespace WebApi.Controllers
 {
+    [Tags("target systems (web app , mobile app ..)")]
     [Route("api/systems")]
     [ApiController]
     public class TargetSystemController : ControllerBase

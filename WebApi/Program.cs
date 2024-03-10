@@ -8,6 +8,7 @@ using System.Reflection;
 using WebApi.Auth.Config;
 using WebApi.Auth.Helpers;
 using WebApi.Auth.Services;
+using WebApi.Controllers;
 using WebApi.Data;
 using WebApi.Models;
 using WebApi.Repositories;

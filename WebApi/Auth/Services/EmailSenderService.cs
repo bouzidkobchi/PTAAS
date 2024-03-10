@@ -7,7 +7,7 @@ namespace WebApi.Auth.Services
 {
     public class EmailSenderService : IEmailSender<ApplicationUser>
     {
-        public async Task SendMessage(string emailSender, string password, string , string email, string subject, string message, int port, string domain)
+        public async Task SendMessage(string emailSender, string password, string email, string subject, string message, int port, string domain)
         {
             var mail = emailSender;
             var passwd = password;
