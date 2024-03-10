@@ -10,28 +10,6 @@ using WebApi.Auth.Services;
 using WebApi.Data;
 using WebApi.Models;
 
-/*
- * POST /api/register       done
- * POST /api/login          done
- * POST /api/logout         done
- * POST /api/refresh-token  done
- * POST /api/forgot-password    done
- * POST /api/reset-password     done
- * POST /api/change-password    done
- * GET /api/user                done
- * PUT /api/user                done
- * 
- * 
- * nots : the admin is a pentester by the way !
- */
-
-/*
-    problem of reading user roles from the  database , and the jwt  creation 
-    
-    refresh token
-    
- */
-
 namespace WebApi.Controllers
 {
     [Tags("authentication")]
